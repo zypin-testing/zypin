@@ -17,7 +17,8 @@
     "mcp": {
       "resources": {
         "example": "features/demo.feature",
-        "steps": "../../lib/cucumber/step-definitions/steps.js"
+        "steps": "../../lib/cucumber/step-definitions/steps.js",
+        "custom-steps-guide": "step-definitions/README.md"
       }
     }
   }
