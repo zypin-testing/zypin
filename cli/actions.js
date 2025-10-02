@@ -6,7 +6,9 @@ import { spawn } from 'child_process';
 export async function createProject(projectName, options) {
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
   const templatePath = path.resolve(__dirname, '../templates', options.template);
-  const projectPath = path.resolve(process.cwd(), projectName);
+  // Use cwd if provided (for MCP), otherwise use process.cwd() (for CLI)
+  const baseDir = options.cwd || process.cwd();
+  const projectPath = path.resolve(baseDir, projectName);
 
   if (fs.existsSync(projectPath)) {
     // Use console.error and exit for CLI-specific validation

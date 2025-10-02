@@ -40,15 +40,27 @@ export async function startAgent(options) {
             type: 'string',
             description: 'Name of the project to create'
           },
+          cwd: {
+            type: 'string',
+            description: 'Absolute path to the directory where the project should be created'
+          },
           template: { 
             type: 'string',
             description: 'Template to use: playwright-basic, selenium-basic, or cucumber-bdd'
           }
         },
-        required: ['projectName']
+        required: ['projectName', 'cwd']
       },
-      handler: async ({ projectName, template }) => {
-        const projectPath = await createProject(projectName, { template: template || 'playwright-basic' });
+      handler: async ({ projectName, cwd, template }) => {
+        // Validate absolute path
+        if (!path.isAbsolute(cwd)) {
+          throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
+        }
+        
+        const projectPath = await createProject(projectName, { 
+          template: template || 'playwright-basic',
+          cwd 
+        });
         return { success: true, message: `Project ${projectName} created at ${projectPath}` };
       }
     },
@@ -62,15 +74,20 @@ export async function startAgent(options) {
             type: 'string',
             description: 'Test file pattern to run (e.g., "tests/**/*.test.js")'
           },
-          directory: { 
+          cwd: { 
             type: 'string',
-            description: 'Project directory to run tests in (defaults to current directory)'
+            description: 'Absolute path to the project directory to run tests in'
           }
         },
-        required: ['filePattern']
+        required: ['filePattern', 'cwd']
       },
-      handler: async ({ filePattern, directory }) => {
-        await runTests(filePattern, { cwd: directory });
+      handler: async ({ filePattern, cwd }) => {
+        // Validate absolute path
+        if (!path.isAbsolute(cwd)) {
+          throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
+        }
+        
+        await runTests(filePattern, { cwd });
         return { success: true, message: 'Tests completed.' };
       }
     },
