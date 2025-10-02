@@ -38,6 +38,17 @@ npm install -g github:zypin-testing/zypin
 
 ## Commands
 
+### `zypin update`
+
+Updates zypin to the latest version from GitHub.
+
+**Example:**
+```bash
+zypin update
+```
+
+This command will download and install the latest version of zypin from the GitHub repository.
+
 ### `zypin init <project-name>`
 
 Creates a new test project in a directory with the given name.

@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import chalk from 'chalk';
+import { spawn } from 'child_process';
 
 export async function createProject(projectName, options) {
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
@@ -55,4 +56,30 @@ export async function runTests(filePattern, options = {}) {
   const runner = await import(runnerPath);
   await runner.run(filePattern, config, { cwd });
   console.log(chalk.green('Test run completed successfully.'));
+}
+
+export async function updateZypin() {
+  console.log(chalk.blue('Updating zypin from GitHub...'));
+  
+  return new Promise((resolve, reject) => {
+    const npm = spawn('npm', ['install', '-g', 'github:zypin-testing/zypin'], {
+      stdio: 'inherit',
+      shell: true
+    });
+
+    npm.on('close', (code) => {
+      if (code === 0) {
+        console.log(chalk.green('\n✓ Zypin updated successfully!'));
+        resolve();
+      } else {
+        console.error(chalk.red(`\n✗ Update failed with exit code ${code}`));
+        reject(new Error(`npm install failed with code ${code}`));
+      }
+    });
+
+    npm.on('error', (err) => {
+      console.error(chalk.red('\n✗ Failed to run npm command'));
+      reject(err);
+    });
+  });
 }

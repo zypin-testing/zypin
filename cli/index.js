@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { createProject, runTests } from './actions.js';
+import { createProject, runTests, updateZypin } from './actions.js';
 
 const program = new Command();
 
@@ -29,5 +29,10 @@ program
     const { startAgent } = await import('../mcp/index.js');
     await startAgent(options);
   });
+
+program
+  .command('update')
+  .description('Update zypin to the latest version from GitHub')
+  .action(updateZypin);
 
 program.parse(process.argv);
