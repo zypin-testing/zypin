@@ -126,12 +126,12 @@ export async function startAgent(options) {
         const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
         const mcpResources = pkgJson.zypin_template?.mcp?.resources || {};
 
-        Object.entries(mcpResources).forEach(([key, file]) => {
+        Object.entries(mcpResources).forEach(([key, config]) => {
           resources.push({
             uri: `zypin://template/${template.id}/${key}`,
-            name: `${template.name} - ${key}`,
-            description: `${key} file from ${template.name} template`,
-            mimeType: 'text/plain'
+            name: config.name,
+            description: config.description,
+            mimeType: config.mimeType || 'text/plain'
           });
         });
       } catch (error) {
@@ -155,12 +155,12 @@ export async function startAgent(options) {
       const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
       const mcpResources = pkgJson.zypin_template?.mcp?.resources || {};
       
-      const filePath = mcpResources[resourceKey];
-      if (!filePath) {
+      const config = mcpResources[resourceKey];
+      if (!config) {
         throw new Error(`Resource '${resourceKey}' not found in template '${templateId}'`);
       }
 
-      const fullPath = path.join(TEMPLATES_DIR, templateId, filePath);
+      const fullPath = path.join(TEMPLATES_DIR, templateId, config.file);
       const content = fs.readFileSync(fullPath, 'utf-8');
 
       return {

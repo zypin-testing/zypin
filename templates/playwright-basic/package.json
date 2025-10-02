@@ -20,7 +20,11 @@
     "tags": ["playwright", "browser", "ui", "end-to-end", "e2e"],
     "mcp": {
       "resources": {
-        "example": "tests/example.test.js"
+        "example": {
+          "file": "tests/example.test.js",
+          "name": "Example Playwright Test",
+          "description": "A sample test demonstrating Playwright browser automation with page interactions"
+        }
       }
     }
   }

@@ -27,7 +27,11 @@
     ],
     "mcp": {
       "resources": {
-        "example": "tests/example.test.js"
+        "example": {
+          "file": "tests/example.test.js",
+          "name": "Example Selenium Test",
+          "description": "A sample test demonstrating Selenium WebDriver browser automation with element interactions"
+        }
       }
     }
   }

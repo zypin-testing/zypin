@@ -16,9 +16,21 @@
     "tags": ["selenium", "cucumber", "bdd", "gherkin", "e2e"],
     "mcp": {
       "resources": {
-        "example": "features/demo.feature",
-        "steps": "../../lib/cucumber/step-definitions/steps.js",
-        "custom-steps-guide": "step-definitions/README.md"
+        "example": {
+          "file": "features/demo.feature",
+          "name": "Example BDD Feature",
+          "description": "A sample Gherkin feature file demonstrating BDD syntax with Cucumber"
+        },
+        "steps": {
+          "file": "../../lib/cucumber/step-definitions/steps.js",
+          "name": "Pre-defined Selenium Steps",
+          "description": "Complete reference of all available step definitions for Selenium automation"
+        },
+        "custom-steps-guide": {
+          "file": "step-definitions/README.md",
+          "name": "Custom Steps Guide",
+          "description": "Instructions for creating custom step definitions in your project"
+        }
       }
     }
   }
