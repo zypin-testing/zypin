@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Cucumber reports and outputs
+cucumber-reports/
+reports/
+test-results/
+
+# Selenium WebDriver binaries
+chromedriver*
+geckodriver*
+msedgedriver*
+operadriver*
+safaridriver*
+
+# Selenium Grid
+selenium-server-standalone*.jar
+
+# Test outputs
+screenshots/
+videos/
+logs/

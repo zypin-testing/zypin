@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Selenium WebDriver binaries
+chromedriver*
+geckodriver*
+msedgedriver*
+operadriver*
+safaridriver*
+
+# Selenium Grid
+selenium-server-standalone*.jar
+
+# Test outputs
+test-results/
+screenshots/
+videos/
+reports/

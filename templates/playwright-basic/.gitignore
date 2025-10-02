@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+
+# Playwright browsers and cache
+test-results/
+playwright-report/
+playwright/.cache/
+playwright/.cache/
+
+# Test outputs
+screenshots/
+videos/
+traces/
+reports/

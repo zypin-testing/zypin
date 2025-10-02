@@ -1,0 +1,24 @@
+{
+  "name": "zypin-cucumber-bdd-template",
+  "version": "1.0.0",
+  "description": "A BDD test project using Cucumber and Selenium.",
+  "type": "module",
+  "scripts": {
+    "test": "zypin test \"features/**/*.feature\""
+  },
+  "dependencies": {
+    "zypin": "file:../.."
+  },
+  "zypin_template": {
+    "name": "Cucumber BDD for Selenium",
+    "type": "e2e-bdd",
+    "description": "A template for writing BDD tests in Gherkin syntax with pre-defined Selenium steps.",
+    "tags": ["selenium", "cucumber", "bdd", "gherkin", "e2e"],
+    "mcp": {
+      "resources": {
+        "example": "features/demo.feature",
+        "steps": "../../lib/cucumber/step-definitions/steps.js"
+      }
+    }
+  }
+}
