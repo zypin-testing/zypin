@@ -7,7 +7,7 @@
     "test": "zypin test \"features/**/*.feature\""
   },
   "dependencies": {
-    "zypin": "file:../.."
+    "zypin": "github:zypin-testing/zypin"
   },
   "zypin_template": {
     "name": "Cucumber BDD for Selenium",
