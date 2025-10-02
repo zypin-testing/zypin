@@ -17,13 +17,23 @@ This project was developed with the assistance of Google's Gemini AI.
 
 ## Installation
 
-To install and use the `zypin` command globally, clone this repository and run `npm link`:
+### From GitHub (Development)
+
+To install and use the `zypin` command globally from the repository:
 
 ```bash
-git clone <repository-url>
+git clone git@github.com:zypin-testing/zypin.git
 cd zypin
 npm install
 npm link
+```
+
+### From GitHub (Direct Install)
+
+To install directly from GitHub without cloning:
+
+```bash
+npm install -g github:zypin-testing/zypin
 ```
 
 ## Commands

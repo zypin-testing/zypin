@@ -26,6 +26,14 @@
   ],
   "author": "",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zypin-testing/zypin.git"
+  },
+  "homepage": "https://github.com/zypin-testing/zypin#readme",
+  "bugs": {
+    "url": "https://github.com/zypin-testing/zypin/issues"
+  },
   "dependencies": {
     "@cucumber/cucumber": "^12.2.0",
     "@modelcontextprotocol/sdk": "^1.18.2",
