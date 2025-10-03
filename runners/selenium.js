@@ -20,7 +20,7 @@ export async function run(filePattern, config, options = {}) {
   // Import all test files. This will have the side effect of populating the registry.
   for (const file of files) {
     const testFilePath = path.resolve(cwd, file);
-    await import(testFilePath);
+    await import(`${testFilePath}?v=${Math.random()}`);
   }
 
   if (global.ZypinSeleniumTests.length === 0) {

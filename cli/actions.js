@@ -42,7 +42,7 @@ export async function runTests(filePattern, options = {}) {
     throw new Error(`zypin.config.js not found in directory: ${cwd}`);
   }
 
-  const config = (await import(configPath)).default;
+  const config = (await import(`${configPath}?v=${Math.random()}`)).default;
   const runnerName = config.runner;
 
   if (!runnerName) {
@@ -55,7 +55,7 @@ export async function runTests(filePattern, options = {}) {
     throw new Error(`Runner '${runnerName}' not found.`);
   }
 
-  const runner = await import(runnerPath);
+  const runner = await import(`${runnerPath}?v=${Math.random()}`);
   await runner.run(filePattern, config, { cwd });
   console.log(chalk.green('Test run completed successfully.'));
 }
