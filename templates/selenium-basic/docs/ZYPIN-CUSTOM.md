@@ -20,7 +20,7 @@ Zypin is a **test runner wrapper** that simplifies test execution across multipl
 
 ```javascript
 // ✅ CORRECT - Zypin import
-import { test, By, Key, until } from 'zypin/selenium';
+import { test, expect, By, Key, until } from 'zypin/selenium';
 
 // ❌ WRONG - Direct Selenium import
 import { Builder, By, Key, until } from 'selenium-webdriver';
@@ -29,13 +29,15 @@ import { Builder, By, Key, until } from 'selenium-webdriver';
 **Why?**
 - `zypin/selenium` provides the `test()` wrapper function
 - Re-exports `By`, `Key`, `until` from selenium-webdriver
+- Re-exports `expect` from Chai for assertions
 - Ensures compatibility with Zypin's test runner
-- `selenium-webdriver` is NOT in dependencies - only `zypin` is
+- `selenium-webdriver` and `chai` are NOT in dependencies - only `zypin` is
 
 **Under the hood:**
 ```javascript
 // zypin/lib/selenium.js
 export { By, Key, until } from 'selenium-webdriver';
+export { expect } from 'chai';
 export { test } from './runner.js';
 ```
 
@@ -46,12 +48,13 @@ export { test } from './runner.js';
 Zypin provides a `test()` function that auto-manages the WebDriver lifecycle.
 
 ```javascript
-import { test, By } from 'zypin/selenium';
+import { test, expect, By } from 'zypin/selenium';
 
 test('Test name', async ({ driver }) => {
   // driver is automatically created from zypin.config.js
   await driver.get('https://example.com');
-  await driver.findElement(By.css('button')).click();
+  const title = await driver.getTitle();
+  expect(title).to.equal('Example Domain');
   // driver automatically quits after test
 });
 ```
@@ -61,6 +64,7 @@ test('Test name', async ({ driver }) => {
 - ✅ No `driver.quit()` - auto-cleanup
 - ✅ Test function receives `{ driver }` object
 - ✅ Configuration comes from `zypin.config.js`
+- ✅ Chai's `expect` included for assertions
 
 **Vanilla Selenium equivalent:**
 ```javascript
@@ -163,6 +167,7 @@ Run with: `BROWSER=firefox npm test`
 | `implicitWait` | `number` | `10000` | Element wait timeout (ms) |
 | `pageLoadTimeout` | `number` | `30000` | Page load timeout (ms) |
 | `scriptTimeout` | `number` | `30000` | Script execution timeout (ms) |
+| `reportsDir` | `string` | `'reports'` | Directory for test reports and screenshots |
 
 **Common browserArgs:**
 - `--start-maximized` - Start browser maximized
@@ -172,6 +177,36 @@ Run with: `BROWSER=firefox npm test`
 - `--incognito` - Private browsing mode
 - `--disable-dev-shm-usage` - Fix Chrome crashes in Docker
 - `--window-size=1920,1080` - Set window size
+
+---
+
+## 📊 Test Reporting
+
+Zypin automatically generates test reports after each run:
+
+**Generated Reports:**
+- `reports/selenium-junit.xml` - JUnit XML format (for CI/CD integration)
+- `reports/selenium-report.json` - Detailed JSON report with all test data
+- `reports/screenshots/` - Screenshots captured on test failures
+
+**Report Contents:**
+- ✅ Test pass/fail status
+- ⏱️ Execution time per test
+- ❌ Error messages and stack traces
+- 📸 Screenshots on failure (automatic)
+- 📊 Summary statistics (total/passed/failed)
+
+**Configure reports directory:**
+```javascript
+// zypin.config.js
+export default {
+  runner: 'selenium',
+  browser: 'chrome',
+  reportsDir: 'reports'  // Change to custom path
+};
+```
+
+Reports are generated automatically - no additional configuration needed!
 
 ---
 
@@ -230,18 +265,19 @@ my-project/
 ### Basic Test
 
 ```javascript
-import { test, By, until } from 'zypin/selenium';
+import { test, expect, By } from 'zypin/selenium';
 
 test('Homepage loads', async ({ driver }) => {
   await driver.get('https://example.com');
-  await driver.wait(until.titleContains('Example'), 5000);
+  const title = await driver.getTitle();
+  expect(title).to.contain('Example');
 });
 ```
 
 ### Form Submission
 
 ```javascript
-import { test, By } from 'zypin/selenium';
+import { test, expect, By, until } from 'zypin/selenium';
 
 test('User can login', async ({ driver }) => {
   await driver.get('https://example.com/login');
@@ -251,13 +287,15 @@ test('User can login', async ({ driver }) => {
   await driver.findElement(By.css('button[type="submit"]')).click();
   
   await driver.wait(until.urlContains('dashboard'), 5000);
+  const url = await driver.getCurrentUrl();
+  expect(url).to.include('dashboard');
 });
 ```
 
 ### Search with Keyboard
 
 ```javascript
-import { test, By, Key, until } from 'zypin/selenium';
+import { test, expect, By, Key, until } from 'zypin/selenium';
 
 test('Google search', async ({ driver }) => {
   await driver.get('https://www.google.com/ncr');
@@ -266,25 +304,46 @@ test('Google search', async ({ driver }) => {
   await searchBox.sendKeys('webdriver', Key.RETURN);
   
   await driver.wait(until.titleContains('webdriver'), 5000);
+  const title = await driver.getTitle();
+  expect(title).to.match(/webdriver/i);
 });
 ```
 
 ### Multiple Tests (Each gets fresh driver)
 
 ```javascript
-import { test, By } from 'zypin/selenium';
+import { test, expect, By } from 'zypin/selenium';
 
 test('Test 1', async ({ driver }) => {
   await driver.get('https://example.com');
-  // ...
+  const h1 = await driver.findElement(By.css('h1')).getText();
+  expect(h1).to.equal('Example Domain');
 });
 
 test('Test 2', async ({ driver }) => {
   // Fresh driver instance for Test 2
   await driver.get('https://example.com/other');
-  // ...
+  const isDisplayed = await driver.findElement(By.id('content')).isDisplayed();
+  expect(isDisplayed).to.be.true;
 });
 ```
+
+---
+
+## ✅ Assertions with Chai
+
+Zypin includes Chai's `expect` API for assertions. Use standard Chai syntax:
+
+```javascript
+const title = await driver.getTitle();
+expect(title).to.equal('Expected Title');
+expect(title).to.contain('Partial');
+expect(title).to.match(/regex/i);
+```
+
+AI agents already know Chai - all standard Chai assertions work: `.to.equal()`, `.to.contain()`, `.to.be.true`, `.to.have.lengthOf()`, etc.
+
+---
 
 **That's it!** Everything else is standard Selenium WebDriver - AI already knows:
 - Locators: `By.css()`, `By.xpath()`, `By.id()`, etc.
@@ -344,6 +403,7 @@ Zypin exposes templates and documentation via MCP (Model Context Protocol) for A
 | **Configuration** | In test code | `zypin.config.js` file |
 | **Cleanup** | Manual `driver.quit()` | Automatic |
 | **Test Wrapper** | None (raw functions) | `test()` function |
+| **Assertions** | Custom/external library | Chai `expect` included |
 | **Run command** | `node test.js` | `zypin test` or `npm test` |
 | **APIs** | Standard Selenium | **Identical** - Zypin re-exports everything |
 
@@ -357,14 +417,26 @@ Zypin exposes templates and documentation via MCP (Model Context Protocol) for A
 ### Q: Why not import from `selenium-webdriver` directly?
 **A:** Zypin manages selenium-webdriver as a sub-dependency. Always import from `zypin/selenium`.
 
+### Q: What assertion library does Zypin use?
+**A:** Zypin includes Chai's `expect` API. Use `.to.equal()`, `.to.contain()`, `.to.be.true`, etc. See the Assertions section above for examples.
+
+### Q: Can I use a different assertion library?
+**A:** Yes, but Chai is already included. You can install and use other libraries like Jest's expect or Node's assert if needed.
+
 ### Q: Can I use multiple browsers in one test?
 **A:** No. One browser per test file. To test multiple browsers, create separate config files or use environment variables.
 
 ### Q: Does Zypin modify Selenium behavior?
-**A:** No. Zypin only provides driver lifecycle management. Test execution is 100% Selenium WebDriver.
+**A:** No. Zypin only provides driver lifecycle management and includes Chai for assertions. Test execution is 100% Selenium WebDriver.
 
 ### Q: Can I use Selenium IDE recordings?
 **A:** Yes, but adapt imports to use `zypin/selenium` instead of `selenium-webdriver`.
+
+### Q: How do I view test reports?
+**A:** After running tests, check the `reports/` directory for JUnit XML and JSON reports. Screenshots of failures are in `reports/screenshots/`.
+
+### Q: Can I disable reporting?
+**A:** Reports are always generated. You can ignore or delete the `reports/` folder if not needed (it's in `.gitignore` by default).
 
 ---
 
@@ -548,5 +620,5 @@ await driver.wait(until.elementLocated(By.id('result')), 5000);
 
 ---
 
-**Summary:** Zypin is a thin wrapper. Import from `zypin/selenium`, use `test()` function, configure via `zypin.config.js`, everything else is standard Selenium WebDriver. **Always scroll before clicking and handle alerts!**
+**Summary:** Zypin is a thin wrapper. Import from `zypin/selenium` (including `test()` and `expect`), configure via `zypin.config.js`, use Chai for assertions, and everything else is standard Selenium WebDriver. **Always scroll before clicking and handle alerts!**
 

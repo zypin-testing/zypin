@@ -4,6 +4,8 @@ import firefox from 'selenium-webdriver/firefox.js';
 import edge from 'selenium-webdriver/edge.js';
 import path from 'path';
 import { glob } from 'glob';
+import fs from 'fs-extra';
+import { SeleniumReporter } from '../lib/selenium-reporter.js';
 
 export async function run(filePattern, config, options = {}) {
   const cwd = options.cwd || process.cwd();
@@ -28,7 +30,15 @@ export async function run(filePattern, config, options = {}) {
     return;
   }
 
+  // Initialize reporter
+  const reportsDir = config.reportsDir || 'reports';
+  const reporter = new SeleniumReporter({ ...config, reportsDir });
+  reporter.init('Selenium Test Suite');
+
   let driver;
+  let passedCount = 0;
+  let failedCount = 0;
+
   try {
     const browser = config.browser || 'chrome';
     console.log(`Starting Selenium driver (${browser})...`);
@@ -39,11 +49,44 @@ export async function run(filePattern, config, options = {}) {
     // Run tests
     for (const test of global.ZypinSeleniumTests) {
       console.log(`Running test: ${test.name}`);
-      await test.fn({ driver });
-      console.log(`✓ ${test.name} passed`);
+      const testInfo = reporter.startTest(test.name);
+      
+      try {
+        await test.fn({ driver });
+        reporter.passTest(testInfo);
+        console.log(`✓ ${test.name} passed`);
+        passedCount++;
+      } catch (error) {
+        // Capture screenshot on failure
+        let screenshotPath = null;
+        try {
+          const screenshotsDir = path.join(reportsDir, 'screenshots');
+          await fs.ensureDir(screenshotsDir);
+          const timestamp = Date.now();
+          const filename = `${test.name.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.png`;
+          screenshotPath = path.join(screenshotsDir, filename);
+          const screenshot = await driver.takeScreenshot();
+          await fs.writeFile(screenshotPath, screenshot, 'base64');
+          console.log(`  Screenshot saved: ${screenshotPath}`);
+        } catch (screenshotError) {
+          console.log(`  Warning: Could not capture screenshot: ${screenshotError.message}`);
+        }
+        
+        reporter.failTest(testInfo, error, screenshotPath);
+        console.log(`✗ ${test.name} failed`);
+        console.log(`  Error: ${error.message}`);
+        failedCount++;
+      }
     }
 
-    console.log(`All tests finished. ${global.ZypinSeleniumTests.length} passed.`);
+    // Generate reports
+    await reporter.generateReports();
+    reporter.printSummary();
+
+    // Exit with error code if any tests failed
+    if (failedCount > 0) {
+      process.exitCode = 1;
+    }
 
   } finally {
     if (driver) {

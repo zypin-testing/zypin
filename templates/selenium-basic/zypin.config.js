@@ -17,5 +17,8 @@ export default {
   // Timeouts in milliseconds
   implicitWait: 10000,       // Element wait
   pageLoadTimeout: 30000,    // Page load
-  scriptTimeout: 30000       // Script execution
+  scriptTimeout: 30000,      // Script execution
+  
+  // Reports directory
+  reportsDir: 'reports'      // JUnit XML, JSON, and screenshots
 };
