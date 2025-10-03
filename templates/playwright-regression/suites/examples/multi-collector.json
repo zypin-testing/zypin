@@ -1,12 +1,21 @@
 [
   {
-    "name": "Visual + Source Comparison",
-    "description": "Combine screenshot and HTML source comparison",
+    "name": "Screen Collector Demo",
+    "description": "Visual screenshot comparison with layout comparator",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
-    "actions": [],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      }
+    ],
     "collect": [
       {
         "type": "screen",
@@ -15,7 +24,18 @@
           "fullPage": true,
           "maxDiffPixelRatio": 0.01
         }
-      },
+      }
+    ]
+  },
+  {
+    "name": "Source Collector Demo",
+    "description": "HTML source code comparison",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
       {
         "type": "source",
         "comparator": "source",
@@ -26,72 +46,8 @@
     ]
   },
   {
-    "name": "Cookie Validation",
-    "description": "Verify cookies are set correctly",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [],
-    "collect": [
-      {
-        "type": "cookies",
-        "comparator": "cookies",
-        "options": {
-          "baselineDir": "baselines/cookies"
-        }
-      }
-    ]
-  },
-  {
-    "name": "JS Error Monitoring",
-    "description": "Monitor for JavaScript console errors",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [],
-    "collect": [
-      {
-        "type": "jsErrors",
-        "comparator": "jsErrors",
-        "options": {
-          "maxErrors": 0,
-          "allowedPatterns": [
-            "analytics",
-            "tracking"
-          ],
-          "includeErrors": true
-        }
-      }
-    ]
-  },
-  {
-    "name": "HTTP Status Code Validation",
-    "description": "Verify all resources load successfully",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [],
-    "collect": [
-      {
-        "type": "statusCodes",
-        "comparator": "statusCodes",
-        "options": {
-          "allowedCodes": [200, 201, 204, 301, 302, 304],
-          "ignorePatterns": [
-            "analytics\\.google\\.com",
-            "doubleclick\\.net"
-          ],
-          "includeFailures": true
-        }
-      }
-    ]
-  },
-  {
-    "name": "Performance Monitoring",
-    "description": "Collect Core Web Vitals and performance metrics",
+    "name": "JS Errors Collector Demo",
+    "description": "Monitor and validate JavaScript console errors",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -104,13 +60,82 @@
     ],
     "collect": [
       {
-        "type": "performance"
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0,
+          "allowedPatterns": [
+            "analytics.*",
+            "tracking.*"
+          ],
+          "includeErrors": true
+        }
       }
     ]
   },
   {
-    "name": "Comprehensive Multi-Collector Test",
-    "description": "Run all collectors at once",
+    "name": "Status Codes Collector Demo",
+    "description": "Validate HTTP response status codes for all resources",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 201, 204, 301, 302, 304],
+          "ignorePatterns": [
+            "analytics\\.google\\.com",
+            "doubleclick\\.net",
+            "googletagmanager\\.com"
+          ],
+          "includeFailures": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Cookies Collector Demo",
+    "description": "Capture and compare browser cookies",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "loadCookies",
+        "cookies": [
+          {
+            "name": "test_cookie",
+            "value": "demo_value",
+            "domain": ".github.io",
+            "path": "/",
+            "secure": true
+          }
+        ]
+      }
+    ],
+    "collect": [
+      {
+        "type": "cookies",
+        "comparator": "cookies",
+        "options": {
+          "baselineDir": "baselines/cookies"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Performance Collector Demo",
+    "description": "Collect Core Web Vitals and performance metrics (no comparator)",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -127,26 +152,138 @@
     ],
     "collect": [
       {
+        "type": "performance"
+      }
+    ]
+  },
+  {
+    "name": "Multi-Collector: Visual + Source",
+    "description": "Combine screenshot and HTML source comparison",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      }
+    ],
+    "collect": [
+      {
         "type": "screen",
         "comparator": "layout",
-        "options": {"fullPage": true}
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      },
+      {
+        "type": "source",
+        "comparator": "source"
+      }
+    ]
+  },
+  {
+    "name": "Multi-Collector: Visual + JS Errors + Status Codes",
+    "description": "Comprehensive test with visual, error, and HTTP validation",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true
+        }
+      },
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0
+        }
+      },
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 304]
+        }
+      }
+    ]
+  },
+  {
+    "name": "Complete Multi-Collector Suite",
+    "description": "Use all collectors together for comprehensive validation",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      },
+      {
+        "type": "waitForImages",
+        "timeout": 10000
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
       },
       {
         "type": "source",
         "comparator": "source"
       },
       {
-        "type": "cookies",
-        "comparator": "cookies"
-      },
-      {
         "type": "jsErrors",
         "comparator": "jsErrors",
-        "options": {"maxErrors": 0}
+        "options": {
+          "maxErrors": 0
+        }
       },
       {
         "type": "statusCodes",
-        "comparator": "statusCodes"
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 304]
+        }
+      },
+      {
+        "type": "cookies",
+        "comparator": "cookies"
       },
       {
         "type": "performance"
@@ -154,4 +291,3 @@
     ]
   }
 ]
-

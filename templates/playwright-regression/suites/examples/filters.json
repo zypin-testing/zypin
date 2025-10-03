@@ -1,33 +1,7 @@
 [
   {
-    "name": "Source with Remove Lines Filter",
-    "description": "Remove specific lines from HTML before comparison",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [],
-    "collect": [
-      {
-        "type": "source",
-        "comparator": "source",
-        "filters": [
-          {
-            "type": "remove",
-            "patterns": [
-              "<!--.*?-->",
-              "data-testid=",
-              "timestamp"
-            ],
-            "description": "Remove comments, test IDs, and timestamps"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "name": "Source with Regex Filter",
-    "description": "Replace dynamic content with placeholders",
+    "name": "Regex Filter - Replace Dates",
+    "description": "Use regex to replace date patterns with placeholders",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -43,21 +17,71 @@
             "pattern": "\\d{4}-\\d{2}-\\d{2}",
             "replacement": "{{DATE}}",
             "flags": "g",
-            "description": "Replace dates with placeholder"
+            "description": "Replace ISO date format (YYYY-MM-DD)"
           },
           {
             "type": "regex",
-            "pattern": "version: \"[^\"]+\"",
-            "replacement": "version: \"{{VERSION}}\"",
+            "pattern": "\\d{1,2}:\\d{2}:\\d{2}",
+            "replacement": "{{TIME}}",
             "flags": "g",
-            "description": "Replace version numbers"
+            "description": "Replace time format (HH:MM:SS)"
           }
         ]
       }
     ]
   },
   {
-    "name": "Source with Remove Nodes Filter",
+    "name": "Regex Filter - Replace Version Numbers",
+    "description": "Normalize version numbers in HTML source",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "regex",
+            "pattern": "v\\d+\\.\\d+\\.\\d+",
+            "replacement": "v{{VERSION}}",
+            "flags": "gi",
+            "description": "Replace semantic version numbers"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Remove Filter - Strip Comments and IDs",
+    "description": "Remove HTML comments and data-testid attributes",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "remove",
+            "patterns": [
+              "<!--.*?-->",
+              "data-testid=\"[^\"]*\"",
+              "timestamp"
+            ],
+            "description": "Remove comments, test IDs, and timestamp references"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "RemoveNodes Filter - Strip Scripts and Styles",
     "description": "Remove entire DOM nodes before comparison",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
@@ -72,19 +96,68 @@
           {
             "type": "removeNodes",
             "selectors": [
-              "[data-dynamic]",
               "script",
-              "style"
+              "style",
+              "noscript"
             ],
-            "description": "Remove dynamic elements and scripts"
+            "description": "Remove script and style tags from HTML"
           }
         ]
       }
     ]
   },
   {
-    "name": "Source with Multiple Filters (Chain)",
-    "description": "Apply multiple filters in sequence",
+    "name": "RemoveNodes Filter - Remove Dynamic Elements",
+    "description": "Remove dynamic content sections before comparison",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "removeNodes",
+            "selectors": [
+              "#currentTime",
+              ".timestamp",
+              ".live-data",
+              "[data-dynamic]"
+            ],
+            "description": "Remove all dynamic content elements"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Extract Filter - Extract Headings Only",
+    "description": "Extract only specific content patterns (headings)",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "extract",
+            "selector": "<h[1-6][^>]*>.*?</h[1-6]>",
+            "description": "Extract all heading tags (h1-h6)"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Chained Filters - Multiple Steps",
+    "description": "Apply multiple filters in sequence for comprehensive cleaning",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -105,20 +178,27 @@
             "pattern": "\\s+",
             "replacement": " ",
             "flags": "g",
-            "description": "Step 2: Normalize whitespace"
+            "description": "Step 2: Normalize all whitespace"
           },
           {
             "type": "remove",
             "patterns": ["<!--.*?-->"],
             "description": "Step 3: Remove HTML comments"
+          },
+          {
+            "type": "regex",
+            "pattern": "\\d{4}-\\d{2}-\\d{2}",
+            "replacement": "{{DATE}}",
+            "flags": "g",
+            "description": "Step 4: Replace dates"
           }
         ]
       }
     ]
   },
   {
-    "name": "Extract Specific Content",
-    "description": "Extract only specific parts of the page",
+    "name": "Chained Filters - Advanced Cleaning",
+    "description": "Advanced filter chain for stable HTML comparison",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -130,17 +210,37 @@
         "comparator": "source",
         "filters": [
           {
-            "type": "extract",
-            "selector": "<h[1-6][^>]*>.*?</h[1-6]>",
-            "description": "Extract only headings"
+            "type": "removeNodes",
+            "selectors": [
+              "#currentTime",
+              ".timestamp",
+              ".live-data"
+            ],
+            "description": "Remove dynamic elements"
+          },
+          {
+            "type": "remove",
+            "patterns": [
+              "data-testid=\"[^\"]*\"",
+              "data-reactroot=\"[^\"]*\"",
+              "nonce=\"[^\"]*\""
+            ],
+            "description": "Remove test and framework attributes"
+          },
+          {
+            "type": "regex",
+            "pattern": "id=\"[a-z0-9-]+\"",
+            "replacement": "id=\"{{ID}}\"",
+            "flags": "g",
+            "description": "Normalize dynamic IDs"
           }
         ]
       }
     ]
   },
   {
-    "name": "Visual + Filtered Source Comparison",
-    "description": "Combine screenshot with filtered source comparison",
+    "name": "Visual Test with Hidden Elements (Hide Action)",
+    "description": "Combine hide actions with visual comparison (alternative to filters)",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -148,38 +248,78 @@
     "actions": [
       {
         "type": "hide",
-        "selector": ".timestamp",
-        "description": "Hide timestamps for visual test"
+        "selector": "#currentTime",
+        "description": "Hide timestamp in hero section"
       },
       {
         "type": "hide",
-        "selector": "#currentTime",
-        "description": "Hide current time for visual test"
+        "selector": ".timestamp"
+      },
+      {
+        "type": "hide",
+        "selector": ".live-data"
+      },
+      {
+        "type": "hide",
+        "selector": ".version-badge"
       }
     ],
     "collect": [
       {
         "type": "screen",
         "comparator": "layout",
-        "options": {"fullPage": true}
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      }
+    ]
+  },
+  {
+    "name": "Combined: Visual + Filtered Source",
+    "description": "Use both visual testing with hidden elements and filtered source comparison",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true
+        }
       },
       {
         "type": "source",
         "comparator": "source",
         "filters": [
           {
+            "type": "removeNodes",
+            "selectors": ["script", "style"]
+          },
+          {
             "type": "regex",
-            "pattern": "data-reactroot=\"[^\"]*\"",
-            "replacement": "",
-            "description": "Remove React-specific attributes"
+            "pattern": "\\d{4}-\\d{2}-\\d{2}",
+            "replacement": "{{DATE}}",
+            "flags": "g"
           },
           {
             "type": "remove",
-            "patterns": ["nonce=", "data-emotion"]
+            "patterns": ["data-testid="]
           }
         ]
       }
     ]
   }
 ]
-

@@ -1,7 +1,7 @@
 [
   {
-    "name": "Scroll Actions Demo",
-    "description": "Demonstrate scroll to element and coordinates",
+    "name": "Click Action Demo",
+    "description": "Demonstrate click action on buttons and links",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -9,7 +9,153 @@
     "actions": [
       {
         "type": "scroll",
-        "selector": "footer",
+        "selector": "#clickButton"
+      },
+      {
+        "type": "click",
+        "selector": "#clickButton",
+        "description": "Click button to increment counter"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Type Action Demo",
+    "description": "Demonstrate typing text into input fields",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "#nameInput"
+      },
+      {
+        "type": "type",
+        "selector": "#nameInput",
+        "text": "John Doe",
+        "description": "Type into name field"
+      },
+      {
+        "type": "type",
+        "selector": "#emailInput",
+        "text": "john@example.com"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Check/Uncheck Action Demo",
+    "description": "Demonstrate checkbox checking and unchecking",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "#demoForm"
+      },
+      {
+        "type": "check",
+        "selector": "[data-testid='checkbox-playwright']",
+        "description": "Check Playwright checkbox"
+      },
+      {
+        "type": "check",
+        "selector": "[data-testid='checkbox-selenium']"
+      },
+      {
+        "type": "uncheck",
+        "selector": "[data-testid='checkbox-playwright']",
+        "description": "Uncheck Playwright checkbox"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Select Action Demo",
+    "description": "Demonstrate dropdown selection",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "#countrySelect"
+      },
+      {
+        "type": "select",
+        "selector": "#countrySelect",
+        "value": "vn",
+        "description": "Select Vietnam from dropdown"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Hover Action Demo",
+    "description": "Demonstrate hover effect on elements",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "[data-testid='hover-card']"
+      },
+      {
+        "type": "hover",
+        "selector": "[data-testid='hover-card']",
+        "description": "Hover to reveal hidden content"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Scroll Action Demo",
+    "description": "Demonstrate scrolling to elements and coordinates",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "#footer",
         "description": "Scroll to footer"
       },
       {
@@ -19,8 +165,12 @@
       {
         "type": "scroll",
         "x": 0,
-        "y": 0,
-        "description": "Scroll back to top"
+        "y": 500,
+        "description": "Scroll to specific coordinates"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
       }
     ],
     "collect": [
@@ -28,8 +178,169 @@
     ]
   },
   {
-    "name": "Execute Script Demo",
-    "description": "Run custom JavaScript on the page",
+    "name": "Hide Action Demo",
+    "description": "Demonstrate hiding dynamic elements",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide timestamp element"
+      },
+      {
+        "type": "hide",
+        "selector": ".version-badge",
+        "description": "Hide version badge"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout", "options": {"fullPage": true}}
+    ]
+  },
+  {
+    "name": "ReplaceText Action Demo",
+    "description": "Demonstrate replacing text in elements",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "replaceText",
+        "selector": ".logo",
+        "text": "Modified Title",
+        "description": "Replace logo text"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "WaitForElement Action Demo",
+    "description": "Demonstrate waiting for element to be visible",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForElement",
+        "selector": "nav",
+        "state": "visible",
+        "timeout": 5000,
+        "description": "Wait for navigation to be visible"
+      },
+      {
+        "type": "waitForElement",
+        "selector": "#demoForm",
+        "state": "visible"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "WaitForPageLoaded Action Demo",
+    "description": "Demonstrate waiting for page load states",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle",
+        "timeout": 30000,
+        "description": "Wait for network to be idle"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "WaitForImages Action Demo",
+    "description": "Demonstrate waiting for images to load",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "#images"
+      },
+      {
+        "type": "waitForImages",
+        "timeout": 10000,
+        "description": "Wait for all images to load"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Sleep Action Demo",
+    "description": "Demonstrate pausing execution with sleep",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "sleep",
+        "duration": 1000,
+        "description": "Wait 1 second before taking screenshot"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "SetViewport Action Demo",
+    "description": "Demonstrate changing viewport during test execution",
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
+    "viewports": [
+      {"name": "Initial", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "sleep",
+        "duration": 500
+      },
+      {
+        "type": "setViewport",
+        "width": 768,
+        "height": 1024,
+        "description": "Change to tablet viewport"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "ExecuteScript Action Demo",
+    "description": "Demonstrate executing custom JavaScript",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
@@ -37,7 +348,7 @@
     "actions": [
       {
         "type": "executeScript",
-        "script": "() => { document.body.style.backgroundColor = '#f0f0f0'; }",
+        "script": "() => { document.body.style.backgroundColor = '#e3f2fd'; }",
         "description": "Change background color via script"
       },
       {
@@ -50,177 +361,79 @@
     ]
   },
   {
-    "name": "Wait Actions Demo",
-    "description": "Demonstrate different wait strategies",
+    "name": "LoadCookies Action Demo",
+    "description": "Demonstrate loading cookies before page navigation",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
-        "type": "waitForPageLoaded",
-        "state": "networkidle",
-        "timeout": 30000,
-        "description": "Wait for network to be idle"
-      },
-      {
-        "type": "waitForElement",
-        "selector": "nav",
-        "state": "visible",
-        "timeout": 5000,
-        "description": "Wait for navigation to be visible"
-      },
-      {
-        "type": "waitForImages",
-        "timeout": 10000,
-        "description": "Wait for all images to load"
+        "type": "loadCookies",
+        "cookies": [
+          {
+            "name": "demo_cookie",
+            "value": "test_value_123",
+            "domain": ".github.io",
+            "path": "/",
+            "secure": true,
+            "httpOnly": false,
+            "sameSite": "Lax"
+          }
+        ],
+        "description": "Load cookies for authentication/session"
       }
     ],
     "collect": [
-      {"type": "screen", "comparator": "layout"}
+      {"type": "screen", "comparator": "layout"},
+      {"type": "cookies", "comparator": "cookies"}
     ]
   },
   {
-    "name": "Hover and Click Demo",
-    "description": "Demonstrate hover and click interactions",
+    "name": "Complex Multi-Action Workflow",
+    "description": "Combine multiple actions in a realistic test scenario",
     "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
-        "type": "hover",
-        "selector": ".get-started-link",
-        "description": "Hover over Get Started link"
+        "type": "hide",
+        "selector": "#currentTime"
       },
       {
-        "type": "sleep",
-        "duration": 500
-      },
-      {
-        "type": "click",
-        "selector": ".get-started-link",
-        "description": "Click Get Started link"
+        "type": "hide",
+        "selector": ".timestamp"
       },
       {
         "type": "waitForPageLoaded",
         "state": "networkidle"
-      }
-    ],
-    "collect": [
-      {"type": "screen", "comparator": "layout"}
-    ]
-  },
-  {
-    "name": "Form Interaction Demo",
-    "description": "Demonstrate form filling and selection",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [
+      },
+      {
+        "type": "scroll",
+        "selector": "#demoForm"
+      },
       {
         "type": "type",
         "selector": "#nameInput",
-        "text": "Test User",
-        "description": "Type into input field"
+        "text": "Test User"
       },
       {
-        "type": "sleep",
-        "duration": 300
-      }
-    ],
-    "collect": [
-      {"type": "screen", "comparator": "layout"}
-    ]
-  },
-  {
-    "name": "Hide and Replace Text Demo",
-    "description": "Hide dynamic elements and replace text",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [
-      {
-        "type": "hide",
-        "selector": ".version-badge",
-        "description": "Hide version badge"
+        "type": "check",
+        "selector": "[data-testid='checkbox-playwright']"
       },
       {
-        "type": "replaceText",
-        "selector": "h1",
-        "text": "Modified Heading",
-        "description": "Replace heading text"
-      }
-    ],
-    "collect": [
-      {"type": "screen", "comparator": "layout"}
-    ]
-  },
-  {
-    "name": "Dynamic Viewport Demo",
-    "description": "Change viewport size during test",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Initial", "width": 1920, "height": 1080}
-    ],
-    "actions": [
-      {
-        "type": "setViewport",
-        "width": 768,
-        "height": 1024,
-        "description": "Switch to tablet size"
-      },
-      {
-        "type": "sleep",
-        "duration": 500
-      }
-    ],
-    "collect": [
-      {"type": "screen", "comparator": "layout"}
-    ]
-  },
-  {
-    "name": "Complex Multi-Action Flow",
-    "description": "Combine multiple actions in sequence",
-    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
-    "viewports": [
-      {"name": "Desktop", "width": 1920, "height": 1080}
-    ],
-    "actions": [
-      {
-        "type": "waitForPageLoaded",
-        "state": "networkidle"
-      },
-      {
-        "type": "waitForImages",
-        "timeout": 10000
-      },
-      {
-        "type": "hide",
-        "selector": ".theme-doc-version-badge"
+        "type": "select",
+        "selector": "#countrySelect",
+        "value": "vn"
       },
       {
         "type": "scroll",
-        "y": 500
+        "selector": "#dropdownButton"
       },
       {
-        "type": "sleep",
-        "duration": 500
-      },
-      {
-        "type": "hover",
-        "selector": ".get-started-link"
-      },
-      {
-        "type": "sleep",
-        "duration": 300
-      },
-      {
-        "type": "scroll",
-        "x": 0,
-        "y": 0
+        "type": "click",
+        "selector": "#dropdownButton"
       },
       {
         "type": "sleep",
@@ -228,15 +441,7 @@
       }
     ],
     "collect": [
-      {
-        "type": "screen",
-        "comparator": "layout",
-        "options": {
-          "fullPage": true,
-          "maxDiffPixelRatio": 0.02
-        }
-      }
+      {"type": "screen", "comparator": "layout"}
     ]
   }
 ]
-

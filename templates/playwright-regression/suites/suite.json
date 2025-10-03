@@ -1,7 +1,7 @@
 [
   {
-    "name": "Basic Visual Regression",
-    "description": "Simple visual regression test without any actions",
+    "name": "Homepage Visual Regression",
+    "description": "Full page visual test with dynamic content hidden",
     "urls": [
       "https://zypin-testing.github.io/zypin-demo-website/"
     ],
@@ -22,7 +22,27 @@
         "height": 896
       }
     ],
-    "actions": [],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide dynamic timestamp in hero section"
+      },
+      {
+        "type": "hide",
+        "selector": ".live-data",
+        "description": "Hide live counter"
+      },
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide all timestamps"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
     "collect": [
       {
         "type": "screen",
@@ -31,12 +51,19 @@
           "fullPage": true,
           "maxDiffPixelRatio": 0.01
         }
+      },
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0
+        }
       }
     ]
   },
   {
-    "name": "Interactive Elements",
-    "description": "Test with click and sleep actions",
+    "name": "Form Interaction Flow",
+    "description": "Test form filling and validation",
     "urls": [
       "https://zypin-testing.github.io/zypin-demo-website/"
     ],
@@ -49,98 +76,120 @@
     ],
     "actions": [
       {
-        "type": "click",
-        "selector": ".get-started-link",
-        "description": "Click Get Started link",
-        "options": {
-          "timeout": 5000
-        }
+        "type": "scroll",
+        "selector": "#demoForm",
+        "description": "Scroll to form section"
       },
       {
         "type": "sleep",
-        "duration": 1000,
-        "description": "Wait for page transition"
-      }
-    ],
-    "collect": [
-      {
-        "type": "screen",
-        "comparator": "layout",
-        "options": {
-          "fullPage": true
-        }
-      }
-    ]
-  },
-  {
-    "name": "Hide Dynamic Elements",
-    "description": "Hide elements before taking screenshot",
-    "urls": [
-      "https://zypin-testing.github.io/zypin-demo-website/"
-    ],
-    "viewports": [
-      {
-        "name": "Desktop",
-        "width": 1920,
-        "height": 1080
-      }
-    ],
-    "actions": [
-      {
-        "type": "hide",
-        "selector": ".timestamp",
-        "description": "Hide timestamps"
+        "duration": 500
       },
       {
-        "type": "hide",
-        "selector": "#currentTime",
-        "description": "Hide current time display"
-      }
-    ],
-    "collect": [
+        "type": "type",
+        "selector": "#nameInput",
+        "text": "Zypin Tester",
+        "description": "Fill in name field"
+      },
       {
-        "type": "screen",
-        "comparator": "layout",
-        "options": {
-          "fullPage": true
-        }
-      }
-    ]
-  },
-  {
-    "name": "Authenticated Session (Inline Cookies)",
-    "description": "Load cookies before navigation",
-    "urls": [
-      "https://zypin-testing.github.io/zypin-demo-website/"
-    ],
-    "viewports": [
+        "type": "type",
+        "selector": "#emailInput",
+        "text": "test@zypin.dev"
+      },
       {
-        "name": "Desktop",
-        "width": 1920,
-        "height": 1080
-      }
-    ],
-    "actions": [
+        "type": "check",
+        "selector": "[data-testid='checkbox-playwright']"
+      },
       {
-        "type": "loadCookies",
-        "cookies": [
-          {
-            "name": "session_token",
-            "value": "demo-token-12345",
-            "domain": ".github.io",
-            "path": "/",
-            "httpOnly": true,
-            "secure": true,
-            "sameSite": "Lax"
-          }
-        ],
-        "description": "Load authentication cookies"
+        "type": "select",
+        "selector": "#countrySelect",
+        "value": "vn"
+      },
+      {
+        "type": "sleep",
+        "duration": 300
       }
     ],
     "collect": [
       {
         "type": "screen",
         "comparator": "layout"
+      }
+    ]
+  },
+  {
+    "name": "Interactive Elements Test",
+    "description": "Test hover, click, and dropdown interactions",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "[data-testid='dropdown-menu']"
+      },
+      {
+        "type": "click",
+        "selector": "#dropdownButton",
+        "description": "Open dropdown menu"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      },
+      {
+        "type": "hover",
+        "selector": "[data-testid='hover-card']",
+        "description": "Trigger hover effect"
+      },
+      {
+        "type": "sleep",
+        "duration": 300
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout"
+      }
+    ]
+  },
+  {
+    "name": "HTTP Status & Performance Check",
+    "description": "Validate all resources load correctly with performance metrics",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 304],
+          "includeFailures": true
+        }
+      },
+      {
+        "type": "performance"
       }
     ]
   }

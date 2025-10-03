@@ -414,5 +414,139 @@ browserArgs: [
 
 ---
 
-**Summary:** Zypin is a thin wrapper. Import from `zypin/selenium`, use `test()` function, configure via `zypin.config.js`, everything else is standard Selenium WebDriver.
+## 🎯 Best Practices & Common Pitfalls
+
+### Scroll Before Click (Critical!)
+
+Selenium clicks may fail with `ElementClickInterceptedError` if elements are outside the viewport or covered by sticky headers/footers.
+
+**❌ Bad - Click without scrolling:**
+```javascript
+const button = await driver.findElement(By.id('submitButton'));
+await button.click(); // May fail if button is off-screen
+```
+
+**✅ Good - Scroll then click:**
+```javascript
+const button = await driver.findElement(By.id('submitButton'));
+await driver.executeScript('arguments[0].scrollIntoView({block: "center"});', button);
+await driver.sleep(300); // Wait for scroll animation
+await button.click();
+```
+
+**Why `{block: "center"}`?**
+- `{block: "center"}` centers the element vertically, avoiding sticky headers/footers
+- `{block: "start"}` or `true` may position element under sticky header
+- Always add a short `sleep()` after scroll to wait for animation
+
+**When to scroll:**
+- Before every `click()` operation
+- Before `sendKeys()` if element might be off-screen
+- Navigation links at top of page usually don't need scroll
+
+### Handle Alerts Properly
+
+Unhandled alerts will block subsequent test execution with `UnexpectedAlertOpenError`.
+
+**❌ Bad - Ignoring alerts:**
+```javascript
+await driver.findElement(By.id('deleteButton')).click();
+// Alert appears but not handled
+// Next command will fail!
+```
+
+**✅ Good - Accept or dismiss alerts:**
+```javascript
+await driver.findElement(By.id('deleteButton')).click();
+await driver.sleep(300); // Wait for alert to appear
+await driver.switchTo().alert().accept(); // or .dismiss()
+```
+
+**Alert methods:**
+- `alert().accept()` - Click OK
+- `alert().dismiss()` - Click Cancel
+- `alert().getText()` - Read alert message
+- `alert().sendKeys('text')` - Type in prompt
+
+### Wait for Dynamic Content
+
+Don't use fixed `sleep()` for dynamic content. Use explicit waits.
+
+**❌ Bad - Fixed sleep:**
+```javascript
+await button.click();
+await driver.sleep(5000); // What if it loads in 1s? Or takes 6s?
+const result = await driver.findElement(By.id('result')).getText();
+```
+
+**✅ Good - Explicit wait:**
+```javascript
+await button.click();
+await driver.wait(until.elementLocated(By.id('result')), 5000);
+const result = await driver.findElement(By.id('result')).getText();
+```
+
+**Common wait conditions:**
+- `until.elementLocated(By.id('foo'))` - Element exists in DOM
+- `until.elementIsVisible(element)` - Element is visible
+- `until.titleContains('text')` - Page title contains text
+- `until.urlContains('path')` - URL contains path
+
+### Form Interactions Best Practices
+
+**Clear before typing:**
+```javascript
+const input = await driver.findElement(By.id('email'));
+await input.clear(); // Clear existing value
+await input.sendKeys('new@example.com');
+```
+
+**Select dropdowns:**
+```javascript
+const select = await driver.findElement(By.id('country'));
+await select.findElement(By.css('option[value="us"]')).click();
+```
+
+**Checkboxes/Radio - Check state first:**
+```javascript
+const checkbox = await driver.findElement(By.id('terms'));
+const isChecked = await checkbox.isSelected();
+if (!isChecked) {
+  await checkbox.click();
+}
+```
+
+### Common Error Patterns
+
+| Error | Cause | Solution |
+|-------|-------|----------|
+| `ElementClickInterceptedError` | Element off-screen or covered | Scroll before click |
+| `UnexpectedAlertOpenError` | Alert not handled | Accept/dismiss alert |
+| `NoSuchElementError` | Element not found | Check selector, add wait |
+| `StaleElementReferenceError` | DOM changed after finding element | Re-find element |
+| `TimeoutError` | Element didn't appear in time | Increase timeout or fix selector |
+
+### Performance Tips
+
+**Reuse elements in same context:**
+```javascript
+const form = await driver.findElement(By.id('loginForm'));
+await form.findElement(By.name('username')).sendKeys('user');
+await form.findElement(By.name('password')).sendKeys('pass');
+// Better than finding from root twice
+```
+
+**Batch operations:**
+```javascript
+// Multiple clicks without waiting
+await button1.click();
+await button2.click();
+await button3.click();
+// Then wait for final result
+await driver.wait(until.elementLocated(By.id('result')), 5000);
+```
+
+---
+
+**Summary:** Zypin is a thin wrapper. Import from `zypin/selenium`, use `test()` function, configure via `zypin.config.js`, everything else is standard Selenium WebDriver. **Always scroll before clicking and handle alerts!**
 
