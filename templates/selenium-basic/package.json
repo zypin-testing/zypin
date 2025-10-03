@@ -27,10 +27,20 @@
     ],
     "mcp": {
       "resources": {
-        "example": {
+        "zypin-custom": {
+          "file": "docs/ZYPIN-CUSTOM.md",
+          "name": "Zypin Selenium Custom Features",
+          "description": "Focused guide on Zypin-specific customizations for Selenium (imports, test structure, config, CLI). Standard Selenium knowledge assumed."
+        },
+        "example-test": {
           "file": "tests/example.test.js",
-          "name": "Example Selenium Test",
-          "description": "A sample test demonstrating Selenium WebDriver browser automation with element interactions"
+          "name": "Example Test File",
+          "description": "Sample Selenium test demonstrating proper imports from zypin/selenium"
+        },
+        "config-example": {
+          "file": "zypin.config.js",
+          "name": "Zypin Config Example",
+          "description": "Zypin configuration file showing runner and browser options"
         }
       }
     }

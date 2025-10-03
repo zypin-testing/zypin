@@ -1,0 +1,143 @@
+[
+  {
+    "name": "Basic Visual Regression",
+    "description": "Simple visual regression test without any actions",
+    "urls": [
+      "https://playwright.dev"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "name": "Tablet",
+        "width": 768,
+        "height": 1024
+      },
+      {
+        "name": "Mobile",
+        "width": 414,
+        "height": 896
+      }
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      }
+    ]
+  },
+  {
+    "name": "Interactive Elements",
+    "description": "Test with click and sleep actions",
+    "urls": [
+      "https://playwright.dev"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "click",
+        "selector": "a[href='/docs/intro']",
+        "description": "Click Get Started link",
+        "options": {
+          "timeout": 5000
+        }
+      },
+      {
+        "type": "sleep",
+        "duration": 1000,
+        "description": "Wait for page transition"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Hide Dynamic Elements",
+    "description": "Hide elements before taking screenshot",
+    "urls": [
+      "https://playwright.dev"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": ".theme-doc-version-badge",
+        "description": "Hide version badge (if exists)"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Authenticated Session (Inline Cookies)",
+    "description": "Load cookies before navigation",
+    "urls": [
+      "https://example.com/dashboard"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "loadCookies",
+        "cookies": [
+          {
+            "name": "session_token",
+            "value": "example-token-12345",
+            "domain": ".example.com",
+            "path": "/",
+            "httpOnly": true,
+            "secure": true,
+            "sameSite": "Lax"
+          }
+        ],
+        "description": "Load authentication cookies"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout"
+      }
+    ]
+  }
+]
+

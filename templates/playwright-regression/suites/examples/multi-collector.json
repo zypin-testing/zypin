@@ -1,0 +1,157 @@
+[
+  {
+    "name": "Visual + Source Comparison",
+    "description": "Combine screenshot and HTML source comparison",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      },
+      {
+        "type": "source",
+        "comparator": "source",
+        "options": {
+          "baselineDir": "baselines/source"
+        }
+      }
+    ]
+  },
+  {
+    "name": "Cookie Validation",
+    "description": "Verify cookies are set correctly",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "cookies",
+        "comparator": "cookies",
+        "options": {
+          "baselineDir": "baselines/cookies"
+        }
+      }
+    ]
+  },
+  {
+    "name": "JS Error Monitoring",
+    "description": "Monitor for JavaScript console errors",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0,
+          "allowedPatterns": [
+            "analytics",
+            "tracking"
+          ],
+          "includeErrors": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "HTTP Status Code Validation",
+    "description": "Verify all resources load successfully",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 201, 204, 301, 302, 304],
+          "ignorePatterns": [
+            "analytics\\.google\\.com",
+            "doubleclick\\.net"
+          ],
+          "includeFailures": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Performance Monitoring",
+    "description": "Collect Core Web Vitals and performance metrics",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "performance"
+      }
+    ]
+  },
+  {
+    "name": "Comprehensive Multi-Collector Test",
+    "description": "Run all collectors at once",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      },
+      {
+        "type": "waitForImages",
+        "timeout": 10000
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {"fullPage": true}
+      },
+      {
+        "type": "source",
+        "comparator": "source"
+      },
+      {
+        "type": "cookies",
+        "comparator": "cookies"
+      },
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {"maxErrors": 0}
+      },
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes"
+      },
+      {
+        "type": "performance"
+      }
+    ]
+  }
+]
+

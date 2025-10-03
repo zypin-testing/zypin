@@ -20,10 +20,20 @@
     "tags": ["playwright", "browser", "ui", "end-to-end", "e2e"],
     "mcp": {
       "resources": {
-        "example": {
+        "zypin-custom": {
+          "file": "docs/ZYPIN-CUSTOM.md",
+          "name": "Zypin Playwright Custom Features",
+          "description": "Focused guide on Zypin-specific customizations for Playwright (imports, config, CLI). Standard Playwright knowledge assumed."
+        },
+        "example-test": {
           "file": "tests/example.test.js",
-          "name": "Example Playwright Test",
-          "description": "A sample test demonstrating Playwright browser automation with page interactions"
+          "name": "Example Test File",
+          "description": "Sample Playwright test demonstrating proper imports from zypin/playwright"
+        },
+        "config-example": {
+          "file": "zypin.config.js",
+          "name": "Zypin Config Example",
+          "description": "Zypin configuration file showing runner and cliArgs structure"
         }
       }
     }

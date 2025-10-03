@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Test Results
+test-results/
+playwright-report/
+baselines/actual/
+baselines/expected/
+baselines/diff/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+

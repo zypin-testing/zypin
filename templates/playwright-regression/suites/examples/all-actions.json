@@ -1,0 +1,242 @@
+[
+  {
+    "name": "Scroll Actions Demo",
+    "description": "Demonstrate scroll to element and coordinates",
+    "urls": ["https://playwright.dev/docs/intro"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "scroll",
+        "selector": "footer",
+        "description": "Scroll to footer"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      },
+      {
+        "type": "scroll",
+        "x": 0,
+        "y": 0,
+        "description": "Scroll back to top"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Execute Script Demo",
+    "description": "Run custom JavaScript on the page",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "executeScript",
+        "script": "() => { document.body.style.backgroundColor = '#f0f0f0'; }",
+        "description": "Change background color via script"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Wait Actions Demo",
+    "description": "Demonstrate different wait strategies",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle",
+        "timeout": 30000,
+        "description": "Wait for network to be idle"
+      },
+      {
+        "type": "waitForElement",
+        "selector": "nav",
+        "state": "visible",
+        "timeout": 5000,
+        "description": "Wait for navigation to be visible"
+      },
+      {
+        "type": "waitForImages",
+        "timeout": 10000,
+        "description": "Wait for all images to load"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Hover and Click Demo",
+    "description": "Demonstrate hover and click interactions",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hover",
+        "selector": "nav a[href='/docs/intro']",
+        "description": "Hover over Docs link"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      },
+      {
+        "type": "click",
+        "selector": "a[href='/docs/intro']",
+        "description": "Click Docs link"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Form Interaction Demo",
+    "description": "Demonstrate form filling and selection",
+    "urls": ["https://demo.playwright.dev/todomvc"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "type",
+        "selector": ".new-todo",
+        "text": "First task",
+        "description": "Type into input field"
+      },
+      {
+        "type": "sleep",
+        "duration": 300
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Hide and Replace Text Demo",
+    "description": "Hide dynamic elements and replace text",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": ".theme-doc-version-badge",
+        "description": "Hide version badge"
+      },
+      {
+        "type": "replaceText",
+        "selector": "h1",
+        "text": "Modified Heading",
+        "description": "Replace heading text"
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Dynamic Viewport Demo",
+    "description": "Change viewport size during test",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Initial", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "setViewport",
+        "width": 768,
+        "height": 1024,
+        "description": "Switch to tablet size"
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {"type": "screen", "comparator": "layout"}
+    ]
+  },
+  {
+    "name": "Complex Multi-Action Flow",
+    "description": "Combine multiple actions in sequence",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      },
+      {
+        "type": "waitForImages",
+        "timeout": 10000
+      },
+      {
+        "type": "hide",
+        "selector": ".theme-doc-version-badge"
+      },
+      {
+        "type": "scroll",
+        "y": 500
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      },
+      {
+        "type": "hover",
+        "selector": "a[href='/docs/intro']"
+      },
+      {
+        "type": "sleep",
+        "duration": 300
+      },
+      {
+        "type": "scroll",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "type": "sleep",
+        "duration": 500
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.02
+        }
+      }
+    ]
+  }
+]
+

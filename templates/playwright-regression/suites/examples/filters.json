@@ -1,0 +1,180 @@
+[
+  {
+    "name": "Source with Remove Lines Filter",
+    "description": "Remove specific lines from HTML before comparison",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "remove",
+            "patterns": [
+              "<!--.*?-->",
+              "data-testid=",
+              "timestamp"
+            ],
+            "description": "Remove comments, test IDs, and timestamps"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Source with Regex Filter",
+    "description": "Replace dynamic content with placeholders",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "regex",
+            "pattern": "\\d{4}-\\d{2}-\\d{2}",
+            "replacement": "{{DATE}}",
+            "flags": "g",
+            "description": "Replace dates with placeholder"
+          },
+          {
+            "type": "regex",
+            "pattern": "version: \"[^\"]+\"",
+            "replacement": "version: \"{{VERSION}}\"",
+            "flags": "g",
+            "description": "Replace version numbers"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Source with Remove Nodes Filter",
+    "description": "Remove entire DOM nodes before comparison",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "removeNodes",
+            "selectors": [
+              "[data-dynamic]",
+              "script",
+              "style"
+            ],
+            "description": "Remove dynamic elements and scripts"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Source with Multiple Filters (Chain)",
+    "description": "Apply multiple filters in sequence",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "removeNodes",
+            "selectors": ["script", "style"],
+            "description": "Step 1: Remove scripts and styles"
+          },
+          {
+            "type": "regex",
+            "pattern": "\\s+",
+            "replacement": " ",
+            "flags": "g",
+            "description": "Step 2: Normalize whitespace"
+          },
+          {
+            "type": "remove",
+            "patterns": ["<!--.*?-->"],
+            "description": "Step 3: Remove HTML comments"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Extract Specific Content",
+    "description": "Extract only specific parts of the page",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [],
+    "collect": [
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "extract",
+            "selector": "<h[1-6][^>]*>.*?</h[1-6]>",
+            "description": "Extract only headings"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Visual + Filtered Source Comparison",
+    "description": "Combine screenshot with filtered source comparison",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": ".theme-doc-version-badge",
+        "description": "Hide version badge for visual test"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {"fullPage": true}
+      },
+      {
+        "type": "source",
+        "comparator": "source",
+        "filters": [
+          {
+            "type": "regex",
+            "pattern": "data-reactroot=\"[^\"]*\"",
+            "replacement": "",
+            "description": "Remove React-specific attributes"
+          },
+          {
+            "type": "remove",
+            "patterns": ["nonce=", "data-emotion"]
+          }
+        ]
+      }
+    ]
+  }
+]
+

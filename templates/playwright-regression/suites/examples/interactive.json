@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Click and Wait Example",
+    "description": "Demonstrate click and sleep actions",
+    "urls": ["https://playwright.dev"],
+    "viewports": [
+      {"name": "Desktop", "width": 1920, "height": 1080}
+    ],
+    "actions": [
+      {
+        "type": "click",
+        "selector": "a[href='/docs/intro']",
+        "options": {"timeout": 5000}
+      },
+      {
+        "type": "sleep",
+        "duration": 2000
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {"fullPage": true}
+      }
+    ]
+  }
+]
+

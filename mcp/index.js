@@ -115,6 +115,26 @@ export async function startAgent(options) {
   }
 
   // ==================== RESOURCES ====================
+  
+  // Helper function to infer MIME type from file extension
+  const inferMimeType = (filePath) => {
+    const ext = path.extname(filePath).toLowerCase();
+    const mimeMap = {
+      '.md': 'text/markdown',
+      '.json': 'application/json',
+      '.js': 'text/javascript',
+      '.mjs': 'text/javascript',
+      '.ts': 'text/typescript',
+      '.html': 'text/html',
+      '.css': 'text/css',
+      '.xml': 'application/xml',
+      '.yaml': 'text/yaml',
+      '.yml': 'text/yaml',
+      '.txt': 'text/plain'
+    };
+    return mimeMap[ext] || 'text/plain';
+  };
+
   // Auto-discover resources from all templates
   const getResources = () => {
     const templates = listAllTemplates();
@@ -131,7 +151,7 @@ export async function startAgent(options) {
             uri: `zypin://template/${template.id}/${key}`,
             name: config.name,
             description: config.description,
-            mimeType: config.mimeType || 'text/plain'
+            mimeType: config.mimeType || inferMimeType(config.file)
           });
         });
       } catch (error) {
@@ -161,13 +181,22 @@ export async function startAgent(options) {
       }
 
       const fullPath = path.join(TEMPLATES_DIR, templateId, config.file);
+      
+      // Validate file existence
+      if (!fs.existsSync(fullPath)) {
+        throw new Error(`Resource file not found: ${config.file} (resolved to: ${fullPath})`);
+      }
+
       const content = fs.readFileSync(fullPath, 'utf-8');
+
+      // Use configured MIME type, fallback to auto-detection, then default to text/plain
+      const mimeType = config.mimeType || inferMimeType(config.file);
 
       return {
         contents: [
           {
             uri,
-            mimeType: 'text/plain',
+            mimeType,
             text: content
           }
         ]
@@ -250,8 +279,9 @@ export async function startAgent(options) {
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
 
+  const resourceCount = getResources().length;
   console.error('Zypin MCP Server started');
-  console.error(`Capabilities: Tools (${tools.length}) ✓ | Resources ✓`);
+  console.error(`Capabilities: Tools (${tools.length}) ✓ | Resources (${resourceCount}) ✓`);
   const transport = new StdioServerTransport();
   await server.connect(transport);
   

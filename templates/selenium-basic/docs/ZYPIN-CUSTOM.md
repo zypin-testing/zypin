@@ -1,0 +1,418 @@
+# Zypin Selenium Template - Custom Implementation
+
+**What AI needs to know about Zypin's custom Selenium integration.**
+
+> **Note:** This document ONLY covers Zypin-specific customizations. For standard Selenium WebDriver APIs (driver.findElement, By locators, waits, etc.), refer to official Selenium documentation - AI agents already know this.
+
+---
+
+## 🎯 What is Zypin?
+
+Zypin is a **test runner wrapper** that simplifies test execution across multiple frameworks (Selenium, Playwright, Cucumber). It provides:
+- Unified CLI interface
+- Template-based project scaffolding
+- Auto driver management (no need to `new Builder()` or `driver.quit()`)
+- MCP (Model Context Protocol) integration for AI agents
+
+---
+
+## 📦 Import from `zypin/selenium` (NOT selenium-webdriver)
+
+```javascript
+// ✅ CORRECT - Zypin import
+import { test, By, Key, until } from 'zypin/selenium';
+
+// ❌ WRONG - Direct Selenium import
+import { Builder, By, Key, until } from 'selenium-webdriver';
+```
+
+**Why?**
+- `zypin/selenium` provides the `test()` wrapper function
+- Re-exports `By`, `Key`, `until` from selenium-webdriver
+- Ensures compatibility with Zypin's test runner
+- `selenium-webdriver` is NOT in dependencies - only `zypin` is
+
+**Under the hood:**
+```javascript
+// zypin/lib/selenium.js
+export { By, Key, until } from 'selenium-webdriver';
+export { test } from './runner.js';
+```
+
+---
+
+## 🧪 Test Structure: `test()` Wrapper
+
+Zypin provides a `test()` function that auto-manages the WebDriver lifecycle.
+
+```javascript
+import { test, By } from 'zypin/selenium';
+
+test('Test name', async ({ driver }) => {
+  // driver is automatically created from zypin.config.js
+  await driver.get('https://example.com');
+  await driver.findElement(By.css('button')).click();
+  // driver automatically quits after test
+});
+```
+
+**Key differences from vanilla Selenium:**
+- ✅ No `new Builder()` - driver auto-created
+- ✅ No `driver.quit()` - auto-cleanup
+- ✅ Test function receives `{ driver }` object
+- ✅ Configuration comes from `zypin.config.js`
+
+**Vanilla Selenium equivalent:**
+```javascript
+// What you DON'T need to do with Zypin
+import { Builder } from 'selenium-webdriver';
+
+async function test() {
+  const driver = await new Builder().forBrowser('chrome').build();
+  try {
+    await driver.get('https://example.com');
+    // ... test code
+  } finally {
+    await driver.quit();
+  }
+}
+```
+
+---
+
+## ⚙️ Configuration: `zypin.config.js`
+
+Located at project root. This is the ONLY Zypin-specific config file.
+
+### Required Structure
+
+```javascript
+export default {
+  runner: 'selenium',           // Required: tells Zypin which runner to use
+  browser: 'chrome',            // Required: 'chrome' | 'firefox' | 'edge' | 'safari'
+  headless: false,              // Optional: show/hide browser (default: false)
+  browserArgs: [],              // Optional: browser CLI arguments
+  implicitWait: 10000,          // Optional: element timeout in ms (default: 10000)
+  pageLoadTimeout: 30000,       // Optional: page load timeout in ms (default: 30000)
+  scriptTimeout: 30000          // Optional: script execution timeout in ms (default: 30000)
+};
+```
+
+### Example Configurations
+
+**Development (Local):**
+```javascript
+export default {
+  runner: 'selenium',
+  browser: 'chrome',
+  headless: false,              // Show browser
+  browserArgs: [
+    '--start-maximized',
+    '--disable-notifications'
+  ],
+  implicitWait: 10000,
+  pageLoadTimeout: 30000
+};
+```
+
+**CI/CD:**
+```javascript
+export default {
+  runner: 'selenium',
+  browser: 'chrome',
+  headless: true,               // Headless for CI
+  browserArgs: [
+    '--no-sandbox',              // Required for Docker
+    '--disable-dev-shm-usage',   // Fix Chrome crashes
+    '--disable-gpu'
+  ],
+  pageLoadTimeout: 60000        // Longer timeout for slow CI
+};
+```
+
+**Firefox:**
+```javascript
+export default {
+  runner: 'selenium',
+  browser: 'firefox',
+  headless: true,
+  browserArgs: ['-headless']    // Firefox-specific
+};
+```
+
+**Environment-Based:**
+```javascript
+export default {
+  runner: 'selenium',
+  browser: process.env.BROWSER || 'chrome',
+  headless: process.env.CI === 'true',
+  browserArgs: process.env.CI ? ['--no-sandbox'] : ['--start-maximized']
+};
+```
+
+Run with: `BROWSER=firefox npm test`
+
+### Configuration Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `runner` | `'selenium'` | *required* | Test runner type |
+| `browser` | `'chrome'` \| `'firefox'` \| `'edge'` \| `'safari'` | *required* | Browser to use |
+| `headless` | `boolean` | `false` | Run in headless mode |
+| `browserArgs` | `string[]` | `[]` | Browser command-line arguments |
+| `implicitWait` | `number` | `10000` | Element wait timeout (ms) |
+| `pageLoadTimeout` | `number` | `30000` | Page load timeout (ms) |
+| `scriptTimeout` | `number` | `30000` | Script execution timeout (ms) |
+
+**Common browserArgs:**
+- `--start-maximized` - Start browser maximized
+- `--disable-notifications` - Disable browser notifications
+- `--no-sandbox` - Required for Docker/CI
+- `--disable-gpu` - Disable GPU acceleration
+- `--incognito` - Private browsing mode
+- `--disable-dev-shm-usage` - Fix Chrome crashes in Docker
+- `--window-size=1920,1080` - Set window size
+
+---
+
+## 🚀 Running Tests
+
+### Via Zypin CLI
+
+```bash
+# From package.json script
+npm test
+
+# Direct zypin command
+zypin test tests/**/*.test.js
+zypin test tests/login.test.js
+```
+
+### How It Works
+
+1. Zypin reads `zypin.config.js`
+2. Detects `runner: 'selenium'`
+3. Finds test files matching the pattern
+4. For each test file:
+   - Creates WebDriver with config
+   - Runs test functions
+   - Cleans up driver
+5. Reports results
+
+**Source:** `zypin/runners/selenium.js`
+
+---
+
+## 📁 Project Structure
+
+```
+my-project/
+├── tests/
+│   └── example.test.js        # Test files
+├── docs/
+│   └── ZYPIN-CUSTOM.md        # This file (Zypin-specific docs)
+├── zypin.config.js            # Zypin configuration
+├── package.json
+└── node_modules/
+    └── zypin/                 # Contains selenium-webdriver as sub-dependency
+```
+
+**Key points:**
+- Tests import from `zypin/selenium`
+- Only `zypin` is in `dependencies` (not `selenium-webdriver`)
+- Configuration is in `zypin.config.js`
+- Standard Selenium WebDriver APIs work as-is
+
+---
+
+## 📝 Test File Examples
+
+### Basic Test
+
+```javascript
+import { test, By, until } from 'zypin/selenium';
+
+test('Homepage loads', async ({ driver }) => {
+  await driver.get('https://example.com');
+  await driver.wait(until.titleContains('Example'), 5000);
+});
+```
+
+### Form Submission
+
+```javascript
+import { test, By } from 'zypin/selenium';
+
+test('User can login', async ({ driver }) => {
+  await driver.get('https://example.com/login');
+  
+  await driver.findElement(By.id('username')).sendKeys('testuser');
+  await driver.findElement(By.id('password')).sendKeys('password123');
+  await driver.findElement(By.css('button[type="submit"]')).click();
+  
+  await driver.wait(until.urlContains('dashboard'), 5000);
+});
+```
+
+### Search with Keyboard
+
+```javascript
+import { test, By, Key, until } from 'zypin/selenium';
+
+test('Google search', async ({ driver }) => {
+  await driver.get('https://www.google.com/ncr');
+  
+  const searchBox = await driver.findElement(By.name('q'));
+  await searchBox.sendKeys('webdriver', Key.RETURN);
+  
+  await driver.wait(until.titleContains('webdriver'), 5000);
+});
+```
+
+### Multiple Tests (Each gets fresh driver)
+
+```javascript
+import { test, By } from 'zypin/selenium';
+
+test('Test 1', async ({ driver }) => {
+  await driver.get('https://example.com');
+  // ...
+});
+
+test('Test 2', async ({ driver }) => {
+  // Fresh driver instance for Test 2
+  await driver.get('https://example.com/other');
+  // ...
+});
+```
+
+**That's it!** Everything else is standard Selenium WebDriver - AI already knows:
+- Locators: `By.css()`, `By.xpath()`, `By.id()`, etc.
+- Actions: `click()`, `sendKeys()`, `clear()`, `submit()`
+- Waits: `driver.wait()`, `until.elementLocated()`, `until.titleIs()`, etc.
+- Navigation: `driver.get()`, `driver.navigate().back()`
+- JavaScript: `driver.executeScript()`
+- Alerts, frames, windows, cookies - all standard Selenium
+
+---
+
+## 🔧 MCP Integration
+
+Zypin exposes templates and documentation via MCP (Model Context Protocol) for AI agents.
+
+**MCP Resources** (defined in package.json):
+```json
+{
+  "zypin_template": {
+    "mcp": {
+      "resources": {
+        "zypin-custom": {
+          "file": "docs/ZYPIN-CUSTOM.md",
+          "name": "Zypin Selenium Custom Features",
+          "description": "Zypin-specific customizations for Selenium"
+        },
+        "example": {
+          "file": "tests/example.test.js",
+          "name": "Example Test",
+          "description": "Working example showing Zypin imports and test structure"
+        },
+        "config": {
+          "file": "zypin.config.js",
+          "name": "Config Example",
+          "description": "Zypin configuration file"
+        }
+      }
+    }
+  }
+}
+```
+
+**MCP Tools:**
+- `zypin_new_project` - Create new project from template
+- `zypin_run_tests` - Run tests in project
+- `zypin_list_templates` - List available templates
+
+---
+
+## 💡 Key Differences from Standard Selenium
+
+| Aspect | Standard Selenium | Zypin Selenium |
+|--------|-------------------|----------------|
+| **Import** | `selenium-webdriver` | `zypin/selenium` |
+| **Dependencies** | Install `selenium-webdriver` | Install `zypin` only |
+| **Driver Setup** | Manual `new Builder()` | Auto-created from config |
+| **Configuration** | In test code | `zypin.config.js` file |
+| **Cleanup** | Manual `driver.quit()` | Automatic |
+| **Test Wrapper** | None (raw functions) | `test()` function |
+| **Run command** | `node test.js` | `zypin test` or `npm test` |
+| **APIs** | Standard Selenium | **Identical** - Zypin re-exports everything |
+
+---
+
+## ❓ FAQ
+
+### Q: Can I use standard Selenium documentation?
+**A:** Yes! Zypin just wraps the runner. All Selenium WebDriver APIs work identically.
+
+### Q: Why not import from `selenium-webdriver` directly?
+**A:** Zypin manages selenium-webdriver as a sub-dependency. Always import from `zypin/selenium`.
+
+### Q: Can I use multiple browsers in one test?
+**A:** No. One browser per test file. To test multiple browsers, create separate config files or use environment variables.
+
+### Q: Does Zypin modify Selenium behavior?
+**A:** No. Zypin only provides driver lifecycle management. Test execution is 100% Selenium WebDriver.
+
+### Q: Can I use Selenium IDE recordings?
+**A:** Yes, but adapt imports to use `zypin/selenium` instead of `selenium-webdriver`.
+
+---
+
+## 🐛 Troubleshooting
+
+### "Cannot find module 'zypin/selenium'"
+- Run `npm install` to install zypin dependency
+
+### "Browser not found" or "Driver not found"
+- Install browser: Chrome, Firefox, Edge, or Safari
+- Install driver: ChromeDriver, GeckoDriver, EdgeDriver
+- Add driver to PATH or use webdriver-manager
+
+### Test timeout errors
+- Increase timeouts in `zypin.config.js`
+- Add explicit waits: `driver.wait(until.elementLocated(...))`
+- Verify element selectors are correct
+
+### Chrome crashes in Docker
+```javascript
+browserArgs: [
+  '--no-sandbox',
+  '--disable-dev-shm-usage',
+  '--disable-gpu'
+]
+```
+
+---
+
+## 🎓 Learning Path for AI Agents
+
+1. **Read this doc** - Understand Zypin customizations (5 minutes)
+2. **Standard Selenium knowledge** - AI already has this
+3. **Done!** - You know everything needed
+
+**External resources:**
+- [Selenium WebDriver Docs](https://www.selenium.dev/documentation/webdriver/) - For standard APIs
+- [WebDriver Best Practices](https://www.selenium.dev/documentation/test_practices/) - Testing patterns
+
+---
+
+## 🔗 Related Templates
+
+- **playwright-basic** - Playwright with Zypin
+- **cucumber-bdd** - BDD/Gherkin with Zypin + Selenium
+- **playwright-regression** - Visual regression testing suite
+
+---
+
+**Summary:** Zypin is a thin wrapper. Import from `zypin/selenium`, use `test()` function, configure via `zypin.config.js`, everything else is standard Selenium WebDriver.
+
