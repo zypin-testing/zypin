@@ -2,14 +2,14 @@
   {
     "name": "Click and Wait Example",
     "description": "Demonstrate click and sleep actions",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
         "type": "click",
-        "selector": "a[href='/docs/intro']",
+        "selector": ".get-started-link",
         "options": {"timeout": 5000}
       },
       {

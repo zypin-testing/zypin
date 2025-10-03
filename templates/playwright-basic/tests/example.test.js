@@ -1,14 +1,16 @@
 import { test, expect } from 'zypin/playwright';
 
+const BASE_URL = 'https://zypin-testing.github.io/zypin-demo-website/';
+
 test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  await page.goto(BASE_URL);
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
+  await expect(page).toHaveTitle(/Zypin Testing Demo/);
 });
 
 test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+  await page.goto(BASE_URL);
 
   // Click the get started link.
   await page.getByRole('link', { name: 'Get started' }).click();

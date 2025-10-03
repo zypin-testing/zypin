@@ -2,7 +2,7 @@
   {
     "name": "Scroll Actions Demo",
     "description": "Demonstrate scroll to element and coordinates",
-    "urls": ["https://playwright.dev/docs/intro"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -30,7 +30,7 @@
   {
     "name": "Execute Script Demo",
     "description": "Run custom JavaScript on the page",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -52,7 +52,7 @@
   {
     "name": "Wait Actions Demo",
     "description": "Demonstrate different wait strategies",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -83,15 +83,15 @@
   {
     "name": "Hover and Click Demo",
     "description": "Demonstrate hover and click interactions",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
         "type": "hover",
-        "selector": "nav a[href='/docs/intro']",
-        "description": "Hover over Docs link"
+        "selector": ".get-started-link",
+        "description": "Hover over Get Started link"
       },
       {
         "type": "sleep",
@@ -99,8 +99,8 @@
       },
       {
         "type": "click",
-        "selector": "a[href='/docs/intro']",
-        "description": "Click Docs link"
+        "selector": ".get-started-link",
+        "description": "Click Get Started link"
       },
       {
         "type": "waitForPageLoaded",
@@ -114,15 +114,15 @@
   {
     "name": "Form Interaction Demo",
     "description": "Demonstrate form filling and selection",
-    "urls": ["https://demo.playwright.dev/todomvc"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
         "type": "type",
-        "selector": ".new-todo",
-        "text": "First task",
+        "selector": "#nameInput",
+        "text": "Test User",
         "description": "Type into input field"
       },
       {
@@ -137,14 +137,14 @@
   {
     "name": "Hide and Replace Text Demo",
     "description": "Hide dynamic elements and replace text",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
         "type": "hide",
-        "selector": ".theme-doc-version-badge",
+        "selector": ".version-badge",
         "description": "Hide version badge"
       },
       {
@@ -161,7 +161,7 @@
   {
     "name": "Dynamic Viewport Demo",
     "description": "Change viewport size during test",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Initial", "width": 1920, "height": 1080}
     ],
@@ -184,7 +184,7 @@
   {
     "name": "Complex Multi-Action Flow",
     "description": "Combine multiple actions in sequence",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -211,7 +211,7 @@
       },
       {
         "type": "hover",
-        "selector": "a[href='/docs/intro']"
+        "selector": ".get-started-link"
       },
       {
         "type": "sleep",

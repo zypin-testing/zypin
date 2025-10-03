@@ -3,7 +3,7 @@
     "name": "Basic Visual Regression",
     "description": "Simple visual regression test without any actions",
     "urls": [
-      "https://playwright.dev"
+      "https://zypin-testing.github.io/zypin-demo-website/"
     ],
     "viewports": [
       {
@@ -38,7 +38,7 @@
     "name": "Interactive Elements",
     "description": "Test with click and sleep actions",
     "urls": [
-      "https://playwright.dev"
+      "https://zypin-testing.github.io/zypin-demo-website/"
     ],
     "viewports": [
       {
@@ -50,7 +50,7 @@
     "actions": [
       {
         "type": "click",
-        "selector": "a[href='/docs/intro']",
+        "selector": ".get-started-link",
         "description": "Click Get Started link",
         "options": {
           "timeout": 5000
@@ -76,7 +76,7 @@
     "name": "Hide Dynamic Elements",
     "description": "Hide elements before taking screenshot",
     "urls": [
-      "https://playwright.dev"
+      "https://zypin-testing.github.io/zypin-demo-website/"
     ],
     "viewports": [
       {
@@ -88,8 +88,13 @@
     "actions": [
       {
         "type": "hide",
-        "selector": ".theme-doc-version-badge",
-        "description": "Hide version badge (if exists)"
+        "selector": ".timestamp",
+        "description": "Hide timestamps"
+      },
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide current time display"
       }
     ],
     "collect": [
@@ -106,7 +111,7 @@
     "name": "Authenticated Session (Inline Cookies)",
     "description": "Load cookies before navigation",
     "urls": [
-      "https://example.com/dashboard"
+      "https://zypin-testing.github.io/zypin-demo-website/"
     ],
     "viewports": [
       {
@@ -121,8 +126,8 @@
         "cookies": [
           {
             "name": "session_token",
-            "value": "example-token-12345",
-            "domain": ".example.com",
+            "value": "demo-token-12345",
+            "domain": ".github.io",
             "path": "/",
             "httpOnly": true,
             "secure": true,

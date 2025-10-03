@@ -2,7 +2,7 @@
   {
     "name": "Simple Screenshot Test",
     "description": "Minimal example - just take a screenshot",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],

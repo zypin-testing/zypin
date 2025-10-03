@@ -2,7 +2,7 @@
   {
     "name": "Source with Remove Lines Filter",
     "description": "Remove specific lines from HTML before comparison",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -28,7 +28,7 @@
   {
     "name": "Source with Regex Filter",
     "description": "Replace dynamic content with placeholders",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -59,7 +59,7 @@
   {
     "name": "Source with Remove Nodes Filter",
     "description": "Remove entire DOM nodes before comparison",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -85,7 +85,7 @@
   {
     "name": "Source with Multiple Filters (Chain)",
     "description": "Apply multiple filters in sequence",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -119,7 +119,7 @@
   {
     "name": "Extract Specific Content",
     "description": "Extract only specific parts of the page",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -141,15 +141,20 @@
   {
     "name": "Visual + Filtered Source Comparison",
     "description": "Combine screenshot with filtered source comparison",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
     "actions": [
       {
         "type": "hide",
-        "selector": ".theme-doc-version-badge",
-        "description": "Hide version badge for visual test"
+        "selector": ".timestamp",
+        "description": "Hide timestamps for visual test"
+      },
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide current time for visual test"
       }
     ],
     "collect": [

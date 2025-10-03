@@ -2,7 +2,7 @@
   {
     "name": "Visual + Source Comparison",
     "description": "Combine screenshot and HTML source comparison",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -28,7 +28,7 @@
   {
     "name": "Cookie Validation",
     "description": "Verify cookies are set correctly",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -46,7 +46,7 @@
   {
     "name": "JS Error Monitoring",
     "description": "Monitor for JavaScript console errors",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -69,7 +69,7 @@
   {
     "name": "HTTP Status Code Validation",
     "description": "Verify all resources load successfully",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -92,7 +92,7 @@
   {
     "name": "Performance Monitoring",
     "description": "Collect Core Web Vitals and performance metrics",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],
@@ -111,7 +111,7 @@
   {
     "name": "Comprehensive Multi-Collector Test",
     "description": "Run all collectors at once",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop", "width": 1920, "height": 1080}
     ],

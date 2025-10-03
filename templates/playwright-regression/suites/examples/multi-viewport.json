@@ -2,7 +2,7 @@
   {
     "name": "Responsive Design Test",
     "description": "Test across multiple viewports",
-    "urls": ["https://playwright.dev"],
+    "urls": ["https://zypin-testing.github.io/zypin-demo-website/"],
     "viewports": [
       {"name": "Desktop-1920", "width": 1920, "height": 1080},
       {"name": "Desktop-1366", "width": 1366, "height": 768},
