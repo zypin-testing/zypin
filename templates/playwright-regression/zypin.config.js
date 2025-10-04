@@ -4,8 +4,7 @@ export default {
   // CLI arguments passed directly to playwright test
   // See: https://playwright.dev/docs/test-cli
   cliArgs: [
-    '--reporter', 'html',
-    '--reporter', 'list',
+    '--reporter', 'html,list',
     // More reporters: 'json', 'junit', 'dot', 'line', 'github'
     // Other flags: '--workers=4', '--timeout=30000', '--project=chromium'
   ]
