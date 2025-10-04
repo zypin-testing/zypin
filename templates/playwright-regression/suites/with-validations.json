@@ -113,6 +113,7 @@
       },
       {
         "type": "performance",
+        "comparator": "performance",
         "description": "Collect performance metrics for reference"
       }
     ]
