@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Hello World Visual Test",
+    "description": "Simplest visual regression test - just take a screenshot and compare",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide dynamic timestamp to make test stable"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp",
+        "description": "Hide all timestamps"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle",
+        "description": "Wait for page to fully load"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      }
+    ]
+  }
+]
+

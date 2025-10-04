@@ -178,9 +178,11 @@ my-project/
 // tests/example.test.js
 import { test, expect } from 'zypin/playwright';
 
-test('example test', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
-  await expect(page).toHaveTitle(/Playwright/);
+const BASE_URL = 'https://zypin-testing.github.io/zypin-demo-website/';
+
+test('Hello World Test', async ({ page }) => {
+  await page.goto(BASE_URL);
+  await expect(page).toHaveTitle(/Zypin Testing Demo/);
 });
 ```
 
@@ -204,15 +206,20 @@ Zypin exposes templates and documentation via MCP (Model Context Protocol) for A
   "zypin_template": {
     "mcp": {
       "resources": {
-        "example": {
-          "file": "tests/example.test.js",
-          "name": "Example Test",
-          "description": "Sample Playwright test with Zypin"
-        },
-        "docs": {
+        "zypin-custom": {
           "file": "docs/ZYPIN-CUSTOM.md",
-          "name": "Zypin Custom Guide",
-          "description": "Zypin-specific features for Playwright template"
+          "name": "Zypin Playwright Custom Features",
+          "description": "Focused guide on Zypin-specific customizations for Playwright (imports, config, CLI). Standard Playwright knowledge assumed."
+        },
+        "example-test": {
+          "file": "tests/example.test.js",
+          "name": "Example Test File",
+          "description": "Sample Playwright test demonstrating proper imports from zypin/playwright"
+        },
+        "config-example": {
+          "file": "zypin.config.js",
+          "name": "Zypin Config Example",
+          "description": "Zypin configuration file showing runner and cliArgs structure"
         }
       }
     }

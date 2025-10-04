@@ -368,17 +368,17 @@ Zypin exposes templates and documentation via MCP (Model Context Protocol) for A
         "zypin-custom": {
           "file": "docs/ZYPIN-CUSTOM.md",
           "name": "Zypin Selenium Custom Features",
-          "description": "Zypin-specific customizations for Selenium"
+          "description": "Focused guide on Zypin-specific customizations for Selenium (imports, test structure, config, CLI). Standard Selenium knowledge assumed."
         },
-        "example": {
+        "example-test": {
           "file": "tests/example.test.js",
-          "name": "Example Test",
-          "description": "Working example showing Zypin imports and test structure"
+          "name": "Example Test File",
+          "description": "Sample Selenium test demonstrating proper imports from zypin/selenium"
         },
-        "config": {
+        "config-example": {
           "file": "zypin.config.js",
-          "name": "Config Example",
-          "description": "Zypin configuration file"
+          "name": "Zypin Config Example",
+          "description": "Zypin configuration file showing runner and browser options"
         }
       }
     }

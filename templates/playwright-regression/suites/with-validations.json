@@ -1,0 +1,121 @@
+[
+  {
+    "name": "JavaScript Errors Check",
+    "description": "Validate that the page has no JavaScript console errors",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle",
+        "description": "Wait for page to fully load before checking errors"
+      }
+    ],
+    "collect": [
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0
+        }
+      }
+    ]
+  },
+  {
+    "name": "HTTP Status Codes Check",
+    "description": "Validate all resources load with 200/304 status codes",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle",
+        "description": "Wait for all network requests"
+      }
+    ],
+    "collect": [
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 304],
+          "includeFailures": true
+        }
+      }
+    ]
+  },
+  {
+    "name": "Full Validation Suite",
+    "description": "Combined test with visual + jsErrors + statusCodes + performance",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      },
+      {
+        "type": "waitForPageLoaded",
+        "state": "networkidle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      },
+      {
+        "type": "jsErrors",
+        "comparator": "jsErrors",
+        "options": {
+          "maxErrors": 0
+        }
+      },
+      {
+        "type": "statusCodes",
+        "comparator": "statusCodes",
+        "options": {
+          "allowedCodes": [200, 304],
+          "includeFailures": true
+        }
+      },
+      {
+        "type": "performance",
+        "description": "Collect performance metrics for reference"
+      }
+    ]
+  }
+]
+

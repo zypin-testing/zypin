@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Form Interaction Test",
+    "description": "Test form filling with various input types - showcasing actions like scroll, type, check, select",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime",
+        "description": "Hide dynamic timestamp"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp",
+        "description": "Hide all timestamps"
+      },
+      {
+        "type": "scroll",
+        "selector": "#demoForm",
+        "description": "Scroll to form section"
+      },
+      {
+        "type": "sleep",
+        "duration": 300,
+        "description": "Wait for scroll animation"
+      },
+      {
+        "type": "type",
+        "selector": "#nameInput",
+        "text": "Zypin Tester",
+        "description": "Fill in name field"
+      },
+      {
+        "type": "type",
+        "selector": "#emailInput",
+        "text": "hello@zypin.dev",
+        "description": "Fill in email field"
+      },
+      {
+        "type": "check",
+        "selector": "[data-testid='checkbox-playwright']",
+        "description": "Check Playwright checkbox"
+      },
+      {
+        "type": "select",
+        "selector": "#countrySelect",
+        "value": "vn",
+        "description": "Select Vietnam from dropdown"
+      },
+      {
+        "type": "sleep",
+        "duration": 200,
+        "description": "Let UI settle"
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      }
+    ]
+  },
+  {
+    "name": "Interactive Elements Test",
+    "description": "Test hover and click interactions",
+    "urls": [
+      "https://zypin-testing.github.io/zypin-demo-website/"
+    ],
+    "viewports": [
+      {
+        "name": "Desktop",
+        "width": 1920,
+        "height": 1080
+      }
+    ],
+    "actions": [
+      {
+        "type": "hide",
+        "selector": "#currentTime"
+      },
+      {
+        "type": "hide",
+        "selector": ".timestamp"
+      },
+      {
+        "type": "scroll",
+        "selector": "[data-testid='dropdown-menu']",
+        "description": "Scroll to dropdown section"
+      },
+      {
+        "type": "click",
+        "selector": "#dropdownButton",
+        "description": "Open dropdown menu"
+      },
+      {
+        "type": "sleep",
+        "duration": 300
+      },
+      {
+        "type": "hover",
+        "selector": "[data-testid='hover-card']",
+        "description": "Trigger hover effect on card"
+      },
+      {
+        "type": "sleep",
+        "duration": 200
+      }
+    ],
+    "collect": [
+      {
+        "type": "screen",
+        "comparator": "layout",
+        "options": {
+          "fullPage": true,
+          "maxDiffPixelRatio": 0.01
+        }
+      }
+    ]
+  }
+]
+
