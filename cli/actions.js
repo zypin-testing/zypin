@@ -49,6 +49,12 @@ export async function runTests(filePattern, options = {}) {
     throw new Error('No runner specified in zypin.config.js');
   }
 
+  // Merge cliArgs: append CLI args (CLI wins due to last-flag-wins behavior)
+  const mergedConfig = { 
+    ...config, 
+    cliArgs: [...(config.cliArgs || []), ...(options.cliArgs || [])]
+  };
+
   const __dirname = path.dirname(new URL(import.meta.url).pathname);
   const runnerPath = path.resolve(__dirname, '../runners', `${runnerName}.js`);
   if (!fs.existsSync(runnerPath)) {
@@ -56,7 +62,7 @@ export async function runTests(filePattern, options = {}) {
   }
 
   const runner = await import(`${runnerPath}?v=${Math.random()}`);
-  await runner.run(filePattern, config, { cwd });
+  await runner.run(filePattern, mergedConfig, { cwd });
   console.log(chalk.green('Test run completed successfully.'));
 }
 

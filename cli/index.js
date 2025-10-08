@@ -18,7 +18,13 @@ program
 program
   .command('test <file-pattern>')
   .description('Run tests using the configured runner')
-  .action(runTests);
+  .allowUnknownOption()
+  .allowExcessArguments()
+  .action((filePattern, options, command) => {
+    // Collect all unknown options as CLI args
+    const cliArgs = command.args.slice(1); // Skip the file-pattern
+    runTests(filePattern, { cliArgs });
+  });
 
 program
   .command('mcp')
