@@ -32,7 +32,7 @@ export async function run() {
   const files = fs.readdirSync(baseProjectPath);
   for (const file of files) {
     const srcPath = path.join(baseProjectPath, file);
-    const destPath = path.join(currentDir, file);
+    let destPath = path.join(currentDir, file);
     
     if (file === 'package.json.template') {
       // Replace template variables
@@ -40,6 +40,10 @@ export async function run() {
       let content = fs.readFileSync(srcPath, 'utf-8');
       content = content.replace(/\{\{PROJECT_NAME\}\}/g, projectName);
       fs.writeFileSync(path.join(currentDir, 'package.json'), content);
+    } else if (file === 'gitignore.template') {
+      // Rename back to .gitignore
+      destPath = path.join(currentDir, '.gitignore');
+      fs.copySync(srcPath, destPath);
     } else {
       fs.copySync(srcPath, destPath);
     }
