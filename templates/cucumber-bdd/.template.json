@@ -1,0 +1,7 @@
+{
+  "name": "Cucumber BDD for Selenium",
+  "description": "A template for writing BDD tests in Gherkin syntax with pre-defined Selenium steps",
+  "tags": ["selenium", "cucumber", "bdd", "gherkin", "e2e"],
+  "type": "e2e-bdd",
+  "folder": "cucumber-bdd"
+}

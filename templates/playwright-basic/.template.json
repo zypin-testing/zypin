@@ -1,0 +1,7 @@
+{
+  "name": "Basic Playwright",
+  "description": "A starter template for end-to-end browser testing using Playwright",
+  "tags": ["playwright", "browser", "ui", "end-to-end", "e2e"],
+  "type": "e2e",
+  "folder": "playwright-basic"
+}

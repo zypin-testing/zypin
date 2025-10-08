@@ -1,0 +1,16 @@
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "1.0.0",
+  "description": "Testing project powered by Zypin",
+  "type": "module",
+  "scripts": {
+    "test": "zypin test",
+    "mcp": "zypin mcp",
+    "scaffold": "zypin scaffold",
+    "list": "zypin list",
+    "templates": "zypin list"
+  },
+  "dependencies": {
+    "zypin": "github:zypin-testing/zypin"
+  }
+}

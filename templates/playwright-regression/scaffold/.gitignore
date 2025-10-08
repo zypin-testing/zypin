@@ -1,0 +1,22 @@
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Regression Testing
+/baselines-temp/
+/diff-output/
+/actual-screenshots/
+/failed-diffs/
+/comparison-results/
+
+# Screenshots & Videos
+/screenshots/
+/videos/
+
+# Trace files
+/trace/
+
+# Note: Keep baselines/ folder in git
+# !/baselines/

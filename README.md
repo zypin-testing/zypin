@@ -49,26 +49,37 @@ zypin update
 
 This command will download and install the latest version of zypin from the GitHub repository.
 
-### `zypin init <project-name>`
+### `zypin init`
 
-Creates a new test project in a directory with the given name.
-
-**Options:**
-- `-t, --template <template-name>`: Specify a template to use. Defaults to `playwright-basic`.
-
-**Available Templates:**
-- `playwright-basic`
-- `selenium-basic`
+Creates a new test project in the current directory.
 
 **Example:**
 ```bash
-zypin init my-awesome-project --template selenium-basic
+mkdir my-project && cd my-project
+zypin init
 ```
 
-After creating a project, remember to install its local dependencies:
+### `zypin scaffold <template-name>`
+
+Adds a testing template to the current project.
+
+**Available Templates:**
+- `playwright-basic`
+- `playwright-regression`
+- `selenium-basic`
+- `cucumber-bdd`
+
+**Example:**
 ```bash
-cd my-awesome-project
+zypin scaffold playwright-basic
+zypin scaffold selenium-basic  # Add multiple templates
+```
+
+After creating a project, install dependencies and add templates:
+```bash
 npm install
+zypin list                    # See available templates
+zypin scaffold playwright-basic  # Add a template
 ```
 
 ### `zypin test <file-pattern>`

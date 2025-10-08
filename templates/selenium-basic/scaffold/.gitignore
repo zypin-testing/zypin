@@ -1,0 +1,19 @@
+# Selenium
+/reports/screenshots/*.png
+/reports/videos/
+/drivers/
+geckodriver.log
+chromedriver.log
+selenium-debug.log
+selenium-server.log
+
+# WebDriver logs
+*.log
+
+# Browser profiles
+/profiles/
+
+# Generated reports (keep structure, ignore content)
+/reports/*.html
+/reports/*.json
+/reports/*.xml

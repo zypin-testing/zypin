@@ -1,0 +1,7 @@
+{
+  "name": "Basic Selenium",
+  "description": "A starter template for end-to-end browser testing using Selenium WebDriver",
+  "tags": ["selenium", "webdriver", "browser", "ui", "end-to-end", "e2e"],
+  "type": "e2e",
+  "folder": "selenium-basic"
+}

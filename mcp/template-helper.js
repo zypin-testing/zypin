@@ -15,19 +15,20 @@ export function listAllTemplates() {
 
   return folders.map(folder => {
     try {
-      const pkgPath = path.join(TEMPLATES_DIR, folder, 'package.json');
-      const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-      
-      if (pkgJson.zypin_template) {
-        return {
-          id: folder,
-          name: pkgJson.zypin_template.name,
-          type: pkgJson.zypin_template.type,
-          description: pkgJson.zypin_template.description,
-          tags: pkgJson.zypin_template.tags
-        };
+      const templateJsonPath = path.join(TEMPLATES_DIR, folder, '.template.json');
+      if (!fs.existsSync(templateJsonPath)) {
+        return null;
       }
-      return null;
+      
+      const templateInfo = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
+      
+      return {
+        id: folder,
+        name: templateInfo.name,
+        type: templateInfo.type,
+        description: templateInfo.description,
+        tags: templateInfo.tags
+      };
     } catch (e) {
       return null;
     }

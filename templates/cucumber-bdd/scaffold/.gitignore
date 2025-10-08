@@ -1,0 +1,16 @@
+# Cucumber Reports
+/reports/*.html
+/reports/*.json
+/reports/*.xml
+/reports/screenshots/
+/reports/videos/
+
+# BDD Generated files
+/step-definitions-generated/
+/features-generated/
+
+# Cucumber logs
+cucumber-debug.log
+
+# Generated test data
+/test-data/generated/

@@ -6,10 +6,9 @@ import {
   ListResourcesRequestSchema,
   ReadResourceRequestSchema
 } from '@modelcontextprotocol/sdk/types.js';
-import { createProject, runTests } from '../cli/actions.js';
 import { listAllTemplates } from './template-helper.js';
 import { addBrowserTools } from './browser.js';
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -57,10 +56,27 @@ export async function startAgent(options) {
           throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
         }
         
-        const projectPath = await createProject(projectName, { 
-          template: template || 'playwright-basic',
-          cwd 
-        });
+        // Use the new init + scaffold approach
+        const { run: initRun } = await import('../cli/commands/init.js');
+        const { run: scaffoldRun } = await import('../cli/commands/scaffold.js');
+        
+        // Create base project
+        const originalCwd = process.cwd();
+        const projectPath = path.join(cwd, projectName);
+        
+        // Create project directory and switch to it
+        await fs.ensureDir(projectPath);
+        process.chdir(projectPath);
+        
+        try {
+          await initRun();
+          if (template && template !== 'base') {
+            await scaffoldRun(template);
+          }
+        } finally {
+          process.chdir(originalCwd);
+        }
+        
         return { success: true, message: `Project ${projectName} created at ${projectPath}` };
       }
     },
@@ -87,7 +103,9 @@ export async function startAgent(options) {
           throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
         }
         
-        await runTests(filePattern, { cwd });
+        // Use the new test command
+        const { run: testRun } = await import('../cli/commands/test.js');
+        await testRun(filePattern, { cwd });
         return { success: true, message: 'Tests completed.' };
       }
     },

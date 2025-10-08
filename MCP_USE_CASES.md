@@ -370,7 +370,7 @@ Each template exposes example files via MCP resources:
 
 **Outcome:** Ready-to-use test project
 
-**Note:** This is equivalent to running `zypin init ecommerce-tests --template playwright-basic` from the command line.
+**Note:** This uses the new init + scaffold approach: create base project, then add template.
 
 ---
 

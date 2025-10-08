@@ -1,0 +1,7 @@
+{
+  "name": "Playwright Regression Testing",
+  "description": "Advanced template for visual regression testing with Playwright including baseline management",
+  "tags": ["playwright", "regression", "visual", "testing", "comparison"],
+  "type": "regression",
+  "folder": "playwright-regression"
+}

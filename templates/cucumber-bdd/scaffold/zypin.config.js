@@ -24,9 +24,9 @@ export default {
   // See: https://github.com/cucumber/cucumber-js/blob/main/docs/cli.md
   cliArgs: [
     '--format', 'progress',
-    '--format', 'html:reports/cucumber-report.html',
-    '--format', 'json:reports/cucumber-report.json',
-    '--format', 'junit:reports/cucumber-junit.xml',
+    '--format', 'html:./reports/cucumber-report.html',
+    '--format', 'json:./reports/cucumber-report.json',
+    '--format', 'junit:./reports/cucumber-junit.xml',
     // More formats: 'progress-bar', 'summary', 'usage', '@cucumber/pretty-formatter'
     // Other flags: '--strict', '--fail-fast', '--retry 2'
   ]

@@ -32,7 +32,9 @@ export async function run(filePattern, config, options = {}) {
 
   // Initialize reporter
   const reportsDir = config.reportsDir || 'reports';
-  const reporter = new SeleniumReporter({ ...config, reportsDir });
+  // Resolve reports directory relative to the working directory
+  const resolvedReportsDir = path.isAbsolute(reportsDir) ? reportsDir : path.resolve(cwd, reportsDir);
+  const reporter = new SeleniumReporter({ ...config, reportsDir: resolvedReportsDir });
   reporter.init('Selenium Test Suite');
 
   let driver;
@@ -60,7 +62,7 @@ export async function run(filePattern, config, options = {}) {
         // Capture screenshot on failure
         let screenshotPath = null;
         try {
-          const screenshotsDir = path.join(reportsDir, 'screenshots');
+          const screenshotsDir = path.join(resolvedReportsDir, 'screenshots');
           await fs.ensureDir(screenshotsDir);
           const timestamp = Date.now();
           const filename = `${test.name.replace(/[^a-z0-9]/gi, '_')}_${timestamp}.png`;
