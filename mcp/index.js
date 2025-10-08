@@ -160,18 +160,26 @@ export async function startAgent(options) {
 
     templates.forEach(template => {
       try {
-        const pkgPath = path.join(TEMPLATES_DIR, template.id, 'package.json');
-        const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-        const mcpResources = pkgJson.zypin_template?.mcp?.resources || {};
+        // Try to load from .template.json instead of package.json
+        const templateJsonPath = path.join(TEMPLATES_DIR, template.id, '.template.json');
+        
+        if (fs.existsSync(templateJsonPath)) {
+          const templateJson = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
+          const mcpResources = templateJson.mcp?.resources || {};
 
-        Object.entries(mcpResources).forEach(([key, config]) => {
-          resources.push({
-            uri: `zypin://template/${template.id}/${key}`,
-            name: config.name,
-            description: config.description,
-            mimeType: config.mimeType || inferMimeType(config.file)
+          Object.entries(mcpResources).forEach(([key, config]) => {
+            // Resource files are now relative to the scaffold/ directory
+            const resourceFile = path.join('scaffold', config.file);
+            
+            resources.push({
+              uri: `zypin://template/${template.id}/${key}`,
+              name: config.name,
+              description: config.description,
+              mimeType: config.mimeType || inferMimeType(resourceFile)
+            });
           });
-        });
+        }
+        // If no .template.json or no MCP resources, skip silently
       } catch (error) {
         console.error(`Error loading resources for template ${template.id}:`, error.message);
       }
@@ -189,16 +197,23 @@ export async function startAgent(options) {
     const [, templateId, resourceKey] = match;
     
     try {
-      const pkgPath = path.join(TEMPLATES_DIR, templateId, 'package.json');
-      const pkgJson = JSON.parse(fs.readFileSync(pkgPath, 'utf-8'));
-      const mcpResources = pkgJson.zypin_template?.mcp?.resources || {};
+      // Load from .template.json instead of package.json
+      const templateJsonPath = path.join(TEMPLATES_DIR, templateId, '.template.json');
+      
+      if (!fs.existsSync(templateJsonPath)) {
+        throw new Error(`Template metadata file not found: .template.json`);
+      }
+      
+      const templateJson = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
+      const mcpResources = templateJson.mcp?.resources || {};
       
       const config = mcpResources[resourceKey];
       if (!config) {
         throw new Error(`Resource '${resourceKey}' not found in template '${templateId}'`);
       }
 
-      const fullPath = path.join(TEMPLATES_DIR, templateId, config.file);
+      // Resource files are now in the scaffold/ directory
+      const fullPath = path.join(TEMPLATES_DIR, templateId, 'scaffold', config.file);
       
       // Validate file existence
       if (!fs.existsSync(fullPath)) {

@@ -1,7 +1,63 @@
 {
   "name": "Playwright Regression Testing",
   "description": "Advanced template for visual regression testing with Playwright including baseline management",
-  "tags": ["playwright", "regression", "visual", "testing", "comparison"],
+  "tags": [
+    "playwright",
+    "regression",
+    "visual",
+    "testing",
+    "comparison"
+  ],
   "type": "regression",
-  "folder": "playwright-regression"
+  "folder": "playwright-regression",
+  "mcp": {
+    "resources": {
+      "guide": {
+        "file": "suites/README.md",
+        "name": "Suite Configuration Guide",
+        "description": "Complete guide for configuring regression tests with actions, collectors, comparators, and filters. Includes 5 essential patterns and quick reference tables.",
+        "mimeType": "text/markdown"
+      },
+      "main-suite": {
+        "file": "suites/suite.json",
+        "name": "Main Test Suite",
+        "description": "Main suite.json with 4 example scenarios: basic visual test, interactive elements, hide dynamic elements, and authenticated session"
+      },
+      "example-test": {
+        "file": "tests/regression.test.js",
+        "name": "Example Test Runner",
+        "description": "Example test file showing how to use runSuite() with Playwright test framework"
+      },
+      "pattern-basic": {
+        "file": "suites/examples/basic.json",
+        "name": "Pattern: Basic Screenshot",
+        "description": "Simplest possible test - just take a screenshot for visual regression"
+      },
+      "pattern-interactive": {
+        "file": "suites/examples/interactive.json",
+        "name": "Pattern: Interactive Elements",
+        "description": "Test with click, hover, and wait actions for interactive UI components"
+      },
+      "pattern-all-actions": {
+        "file": "suites/examples/all-actions.json",
+        "name": "Pattern: All Actions Demo",
+        "description": "Comprehensive demonstration of all 15 actions: click, hide, sleep, scroll, executeScript, waitForElement, type, hover, select, check, etc."
+      },
+      "pattern-multi-collector": {
+        "file": "suites/examples/multi-collector.json",
+        "name": "Pattern: Multiple Collectors",
+        "description": "Run multiple collectors in one test: screen (visual), source (HTML), cookies, jsErrors, statusCodes, and performance metrics"
+      },
+      "pattern-filters": {
+        "file": "suites/examples/filters.json",
+        "name": "Pattern: Data Filters",
+        "description": "Examples of data filters: remove lines, regex replacements, remove nodes, extract content, and filter chaining"
+      },
+      "pattern-responsive": {
+        "file": "suites/examples/multi-viewport.json",
+        "name": "Pattern: Responsive Testing",
+        "description": "Test across 5 different viewports for responsive design validation"
+      }
+    }
+  }
 }

@@ -1,7 +1,47 @@
 {
   "name": "Cucumber BDD for Selenium",
   "description": "A template for writing BDD tests in Gherkin syntax with pre-defined Selenium steps",
-  "tags": ["selenium", "cucumber", "bdd", "gherkin", "e2e"],
+  "tags": [
+    "selenium",
+    "cucumber",
+    "bdd",
+    "gherkin",
+    "e2e"
+  ],
   "type": "e2e-bdd",
-  "folder": "cucumber-bdd"
+  "folder": "cucumber-bdd",
+  "mcp": {
+    "resources": {
+      "steps": {
+        "file": "../../lib/cucumber/step-definitions/steps.js",
+        "name": "Pre-defined Step Definitions",
+        "description": "700+ step definitions: navigation, forms, clicks, waits, assertions, browser control"
+      },
+      "world": {
+        "file": "../../lib/cucumber/support/world.js",
+        "name": "CustomWorld Implementation",
+        "description": "Driver lifecycle management (this.driver access)"
+      },
+      "hooks": {
+        "file": "../../lib/cucumber/support/hooks.js",
+        "name": "Cucumber Hooks",
+        "description": "Setup, teardown, screenshot on failure"
+      },
+      "example": {
+        "file": "features/demo.feature",
+        "name": "Example Feature",
+        "description": "Sample Gherkin feature demonstrating step usage"
+      },
+      "config": {
+        "file": "zypin.config.js",
+        "name": "Configuration",
+        "description": "Zypin Cucumber configuration (browser, timeouts, CLI args)"
+      },
+      "custom-steps-guide": {
+        "file": "step-definitions/README.md",
+        "name": "Custom Steps Guide",
+        "description": "How to add custom step definitions (if needed)"
+      }
+    }
+  }
 }
