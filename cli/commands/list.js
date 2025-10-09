@@ -5,42 +5,69 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-export async function run() {
+export async function getTemplatesLogic() {
   const templatesDir = path.resolve(__dirname, '../../templates');
-  
+
   if (!fs.existsSync(templatesDir)) {
-    console.error(chalk.red('Error: Templates directory not found'));
-    process.exit(1);
+    throw new Error('Templates directory not found');
   }
-  
-  console.log(chalk.bold('Available Templates:\n'));
-  
+
   const templateFolders = fs.readdirSync(templatesDir)
     .filter(folder => {
       const templateJsonPath = path.join(templatesDir, folder, '.template.json');
       return fs.existsSync(templateJsonPath);
     });
-  
+
   if (templateFolders.length === 0) {
-    console.log(chalk.yellow('No templates found'));
-    return;
+    return [];
   }
-  
-  templateFolders.forEach(folder => {
+
+  return templateFolders.map(folder => {
     try {
       const templateJsonPath = path.join(templatesDir, folder, '.template.json');
       const templateInfo = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
-      
-      console.log(`${chalk.cyan.bold(folder)}`);
-      console.log(`  ${chalk.bold('Name:')} ${templateInfo.name}`);
-      console.log(`  ${chalk.bold('Type:')} ${templateInfo.type}`);
-      console.log(`  ${chalk.bold('Description:')} ${templateInfo.description}`);
-      console.log(`  ${chalk.bold('Tags:')} ${templateInfo.tags.join(', ')}`);
-      console.log('');
+      return {
+        id: folder,
+        ...templateInfo
+      };
     } catch (error) {
-      console.log(`${chalk.red(folder)} - Invalid template configuration`);
+      // Return a partial object indicating an error for this template
+      return {
+        id: folder,
+        error: 'Invalid template configuration',
+        details: error.message,
+      };
     }
   });
-  
-  console.log(chalk.gray('Usage: npm run scaffold <template-name>'));
+}
+
+export async function run() {
+  try {
+    const templates = await getTemplatesLogic();
+
+    if (templates.length === 0) {
+      console.log(chalk.yellow('No templates found'));
+      return;
+    }
+
+    console.log(chalk.bold('Available Templates:\n'));
+
+    templates.forEach(template => {
+      if (template.error) {
+        console.log(`${chalk.red(template.id)} - ${template.error}`);
+      } else {
+        console.log(`${chalk.cyan.bold(template.id)}`);
+        console.log(`  ${chalk.bold('Name:')} ${template.name}`);
+        console.log(`  ${chalk.bold('Type:')} ${template.type}`);
+        console.log(`  ${chalk.bold('Description:')} ${template.description}`);
+        console.log(`  ${chalk.bold('Tags:')} ${template.tags.join(', ')}`);
+        console.log('');
+      }
+    });
+
+    console.log(chalk.gray('Usage: npm run scaffold <template-name>'));
+  } catch (error) {
+    console.error(chalk.red(`Error: ${error.message}`));
+    process.exit(1);
+  }
 }

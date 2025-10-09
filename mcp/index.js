@@ -1,322 +1,153 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { 
-  ListToolsRequestSchema, 
-  CallToolRequestSchema,
-  ListResourcesRequestSchema,
-  ReadResourceRequestSchema
-} from '@modelcontextprotocol/sdk/types.js';
-import { listAllTemplates } from './template-helper.js';
-import { addBrowserTools } from './browser.js';
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { z } from 'zod';
+
+// Import the refactored logic functions
+import { getTemplatesLogic } from '../cli/commands/list.js';
+import { scaffoldLogic } from '../cli/commands/scaffold.js';
+import { initializeBrowserPlugin } from './browser-plugin.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const TEMPLATES_DIR = path.resolve(__dirname, '../templates');
 
-export async function startAgent(options) {
-  let browserCleanup = null;
-  const server = new Server({
-    name: 'zypin',
-    version: '1.0.0'
-  }, {
-    capabilities: {
-      tools: {},
-      resources: {}
+// --- Server Setup ---
+
+const server = new McpServer({
+  name: 'zypin',
+  version: '1.0.0',
+});
+
+// --- Tool Registration ---
+
+// list_templates
+server.tool(
+  'list_templates',
+  'Lists all available testing templates and their resources.',
+  {}, // No input
+  async () => {
+    const rawTemplates = await getTemplatesLogic();
+    const templates = rawTemplates.map(template => {
+      const resources = template?.mcp?.resources || {};
+      const availableResources = Object.keys(resources).map(key => ({
+        resourceName: key,
+        name: resources[key].name,
+        description: resources[key].description || ''
+      }));
+      return {
+        templateName: template.id,
+        name: template.name,
+        description: template.description,
+        availableResources: availableResources
+      };
+    });
+    return {
+      content: [{ type: 'text', text: JSON.stringify(templates, null, 2) }]
+    };
+  }
+);
+
+// create_project
+server.tool(
+  'create_project',
+  'Creates a new testing project from a specified template.',
+  {
+    projectName: z.string().describe('The name of the directory for the new project.'),
+    templateName: z.string().describe('The name of the template to use.'),
+  },
+  async ({ projectName, templateName }) => {
+    const destinationPath = path.resolve(process.cwd(), projectName);
+    const { targetDir } = await scaffoldLogic(templateName, { destinationPath });
+    const output = {
+      success: true,
+      message: `Project '${projectName}' created successfully from template '${templateName}'.`,
+      path: targetDir,
+    };
+    return {
+      content: [{ type: 'text', text: JSON.stringify(output, null, 2) }]
+    };
+  }
+);
+
+// get_template_resource
+server.tool(
+  'get_template_resource',
+  'Retrieves the content of a specific resource file from a template.',
+  {
+    templateName: z.string().describe('The name of the template (from list_templates).'),
+    resourceName: z.string().describe('The name of the resource to retrieve (from availableResources).'),
+  },
+  async ({ templateName, resourceName }) => {
+    const templatesDir = path.resolve(__dirname, '../templates');
+    const templatePath = path.join(templatesDir, templateName);
+    const templateJsonPath = path.join(templatePath, '.template.json');
+
+    if (!fs.existsSync(templateJsonPath)) {
+      throw new Error(`Template '${templateName}' not found.`);
     }
-  });
 
-  // ==================== TOOLS ====================
-  const tools = [
-    {
-      name: 'zypin_new_project',
-      description: 'Creates a new Zypin test project from a template.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          projectName: { 
-            type: 'string',
-            description: 'Name of the project to create'
-          },
-          cwd: {
-            type: 'string',
-            description: 'Absolute path to the directory where the project should be created'
-          },
-          template: { 
-            type: 'string',
-            description: 'Template to use: playwright-basic, selenium-basic, or cucumber-bdd'
-          }
-        },
-        required: ['projectName', 'cwd']
-      },
-      handler: async ({ projectName, cwd, template }) => {
-        // Validate absolute path
-        if (!path.isAbsolute(cwd)) {
-          throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
-        }
-        
-        // Use the new init + scaffold approach
-        const { run: initRun } = await import('../cli/commands/init.js');
-        const { run: scaffoldRun } = await import('../cli/commands/scaffold.js');
-        
-        // Create base project
-        const originalCwd = process.cwd();
-        const projectPath = path.join(cwd, projectName);
-        
-        // Create project directory and switch to it
-        await fs.ensureDir(projectPath);
-        process.chdir(projectPath);
-        
-        try {
-          await initRun();
-          if (template && template !== 'base') {
-            await scaffoldRun(template);
-          }
-        } finally {
-          process.chdir(originalCwd);
-        }
-        
-        return { success: true, message: `Project ${projectName} created at ${projectPath}` };
-      }
-    },
-    {
-      name: 'zypin_run_tests',
-      description: 'Runs tests in the current or specified project directory.',
-      inputSchema: {
-        type: 'object',
-        properties: {
-          filePattern: { 
-            type: 'string',
-            description: 'Test file pattern to run (e.g., "tests/**/*.test.js")'
-          },
-          cwd: { 
-            type: 'string',
-            description: 'Absolute path to the project directory to run tests in'
-          }
-        },
-        required: ['filePattern', 'cwd']
-      },
-      handler: async ({ filePattern, cwd }) => {
-        // Validate absolute path
-        if (!path.isAbsolute(cwd)) {
-          throw new Error(`cwd must be an absolute path. Received: ${cwd}`);
-        }
-        
-        // Use the new test command
-        const { run: testRun } = await import('../cli/commands/test.js');
-        await testRun(filePattern, { cwd });
-        return { success: true, message: 'Tests completed.' };
-      }
-    },
-    {
-      name: 'zypin_list_templates',
-      description: 'Lists all available project templates and their metadata.',
-      inputSchema: {
-        type: 'object',
-        properties: {}
-      },
-      handler: async () => {
-        const templates = listAllTemplates();
-        return { templates };
-      }
+    const templateInfo = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
+    const resource = templateInfo?.mcp?.resources?.[resourceName];
+
+    if (!resource) {
+      throw new Error(`Resource '${resourceName}' not found in template '${templateName}'.`);
     }
-  ];
 
-  // ==================== BROWSER TOOLS ====================
-  // Add browser automation tools from playwright
-  try {
-    browserCleanup = await addBrowserTools(tools, options);
-  } catch (error) {
-    console.error('Warning: Failed to load browser tools:', error.message);
-    console.error('Continuing without browser automation capabilities...');
+    const resourcePath = path.resolve(templatePath, resource.file);
+
+    if (!fs.existsSync(resourcePath)) {
+      throw new Error(`Resource file not found at path: ${resource.file}`);
+    }
+
+    const content = fs.readFileSync(resourcePath, 'utf-8');
+    const output = {
+      name: resource.name,
+      description: resource.description,
+      content: content,
+    };
+    return {
+      content: [{ type: 'text', text: JSON.stringify(output, null, 2) }]
+    };
+  }
+);
+
+// --- User Tool Loading ---
+
+async function loadUserTools(serverInstance) {
+  const userToolsPath = path.resolve(process.cwd(), 'zypin.mcp.js');
+  if (!fs.existsSync(userToolsPath)) {
+    return; // No user tools file found
   }
 
-  // ==================== RESOURCES ====================
-  
-  // Helper function to infer MIME type from file extension
-  const inferMimeType = (filePath) => {
-    const ext = path.extname(filePath).toLowerCase();
-    const mimeMap = {
-      '.md': 'text/markdown',
-      '.json': 'application/json',
-      '.js': 'text/javascript',
-      '.mjs': 'text/javascript',
-      '.ts': 'text/typescript',
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.xml': 'application/xml',
-      '.yaml': 'text/yaml',
-      '.yml': 'text/yaml',
-      '.txt': 'text/plain'
-    };
-    return mimeMap[ext] || 'text/plain';
-  };
-
-  // Auto-discover resources from all templates
-  const getResources = () => {
-    const templates = listAllTemplates();
-    const resources = [];
-
-    templates.forEach(template => {
-      try {
-        // Try to load from .template.json instead of package.json
-        const templateJsonPath = path.join(TEMPLATES_DIR, template.id, '.template.json');
-        
-        if (fs.existsSync(templateJsonPath)) {
-          const templateJson = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
-          const mcpResources = templateJson.mcp?.resources || {};
-
-          Object.entries(mcpResources).forEach(([key, config]) => {
-            // Resource files are now relative to the scaffold/ directory
-            const resourceFile = path.join('scaffold', config.file);
-            
-            resources.push({
-              uri: `zypin://template/${template.id}/${key}`,
-              name: config.name,
-              description: config.description,
-              mimeType: config.mimeType || inferMimeType(resourceFile)
-            });
-          });
-        }
-        // If no .template.json or no MCP resources, skip silently
-      } catch (error) {
-        console.error(`Error loading resources for template ${template.id}:`, error.message);
-      }
-    });
-
-    return resources;
-  };
-
-  const readResource = async (uri) => {
-    const match = uri.match(/^zypin:\/\/template\/([^\/]+)\/(.+)$/);
-    if (!match) {
-      throw new Error(`Invalid resource URI: ${uri}`);
-    }
-
-    const [, templateId, resourceKey] = match;
+  try {
+    console.error('Loading user-defined tools from zypin.mcp.js...');
+    const userModule = await import(`${userToolsPath}?v=${Date.now()}`);
     
-    try {
-      // Load from .template.json instead of package.json
-      const templateJsonPath = path.join(TEMPLATES_DIR, templateId, '.template.json');
-      
-      if (!fs.existsSync(templateJsonPath)) {
-        throw new Error(`Template metadata file not found: .template.json`);
-      }
-      
-      const templateJson = JSON.parse(fs.readFileSync(templateJsonPath, 'utf-8'));
-      const mcpResources = templateJson.mcp?.resources || {};
-      
-      const config = mcpResources[resourceKey];
-      if (!config) {
-        throw new Error(`Resource '${resourceKey}' not found in template '${templateId}'`);
-      }
-
-      // Resource files are now in the scaffold/ directory
-      const fullPath = path.join(TEMPLATES_DIR, templateId, 'scaffold', config.file);
-      
-      // Validate file existence
-      if (!fs.existsSync(fullPath)) {
-        throw new Error(`Resource file not found: ${config.file} (resolved to: ${fullPath})`);
-      }
-
-      const content = fs.readFileSync(fullPath, 'utf-8');
-
-      // Use configured MIME type, fallback to auto-detection, then default to text/plain
-      const mimeType = config.mimeType || inferMimeType(config.file);
-
-      return {
-        contents: [
-          {
-            uri,
-            mimeType,
-            text: content
-          }
-        ]
-      };
-    } catch (error) {
-      throw new Error(`Failed to read resource: ${error.message}`);
+    if (Array.isArray(userModule.default)) {
+      userModule.default.forEach(tool => {
+        // The user-defined tool should follow the same structure
+        serverInstance.tool(tool.name, tool.description, tool.inputSchema, tool.execute);
+      });
+      console.error(`Found and registered ${userModule.default.length} user-defined tool(s).`);
+    } else {
+      console.error('Warning: zypin.mcp.js was found, but it does not have a default export that is an array.');
     }
-  };
+  } catch (error) {
+    console.error('Error loading user-defined tools from zypin.mcp.js:', error);
+  }
+}
 
-  // ==================== HANDLERS ====================
-  
-  // Tool handlers
-  server.setRequestHandler(CallToolRequestSchema, async (request) => {
-    const toolName = request.params.name;
-    const tool = tools.find(t => t.name === toolName);
+// --- Main Server Execution ---
 
-    if (!tool) {
-      throw new Error(`Unknown tool: ${toolName}`);
-    }
+export async function main(cliOptions = {}) {
+  // Initialize plugins
+  await initializeBrowserPlugin(server, cliOptions);
 
-    try {
-      const result = await tool.handler(request.params.arguments || {});
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify(result, null, 2)
-          }
-        ]
-      };
-    } catch (error) {
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              success: false,
-              error: error.message
-            }, null, 2)
-          }
-        ],
-        isError: true
-      };
-    }
-  });
+  // Load user tools and register them
+  await loadUserTools(server);
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return {
-      tools: tools.map(tool => ({
-        name: tool.name,
-        description: tool.description,
-        inputSchema: tool.inputSchema
-      }))
-    };
-  });
-
-  // Resource handlers
-  server.setRequestHandler(ListResourcesRequestSchema, async () => {
-    return {
-      resources: getResources()
-    };
-  });
-
-  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
-    return await readResource(request.params.uri);
-  });
-
-  // ==================== LIFECYCLE ====================
-  
-  // Handle graceful shutdown
-  const shutdown = async () => {
-    console.error('\nShutting down Zypin Agent...');
-    if (browserCleanup) {
-      console.error('Cleaning up browser resources...');
-      await browserCleanup.cleanup();
-    }
-    process.exit(0);
-  };
-
-  process.on('SIGINT', shutdown);
-  process.on('SIGTERM', shutdown);
-
-  const resourceCount = getResources().length;
-  console.error('Zypin MCP Server started');
-  console.error(`Capabilities: Tools (${tools.length}) ✓ | Resources (${resourceCount}) ✓`);
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  
-  // Server will stay alive until client disconnects or SIGINT/SIGTERM is received
+  console.error(`Zypin MCP Server running on stdio.`);
 }

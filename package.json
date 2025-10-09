@@ -46,6 +46,7 @@
     "glob": "^11.0.3",
     "junit-report-builder": "^5.1.1",
     "playwright-core": "1.56.0-alpha-2025-10-01",
-    "selenium-webdriver": "^4.35.0"
+    "selenium-webdriver": "^4.35.0",
+    "zod": "^3.25.76"
   }
 }

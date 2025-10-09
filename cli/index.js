@@ -47,11 +47,11 @@ program
 program
   .command('mcp')
   .description('Start the unified Zypin agent for AI interaction.')
-  .option('--headed', 'Run the browser in headed mode')
+  .option('--headless', 'Run browser without UI (default: headed with UI)')
   .option('--browser <browser-name>', 'Browser to use (chromium, firefox, webkit)', 'chromium')
   .action(async (options) => {
-    const { startAgent } = await import('../mcp/index.js');
-    await startAgent(options);
+    const { main } = await import('../mcp/index.js');
+    await main(options);
   });
 
 program.parse(process.argv);
