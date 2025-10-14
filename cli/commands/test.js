@@ -5,6 +5,15 @@ import chalk from 'chalk';
 export async function run(filePattern, options = {}) {
   const cwd = options.cwd || process.cwd();
   
+  // Convert absolute paths to relative paths
+  if (path.isAbsolute(filePattern)) {
+    filePattern = path.relative(cwd, filePattern);
+    // If it's a directory, ensure it ends with /
+    if (!filePattern.includes('*') && !filePattern.includes('.')) {
+      filePattern = filePattern + (filePattern.endsWith('/') ? '' : '/');
+    }
+  }
+  
   // Smart directory detection - auto-find tests in directory
   let actualPattern = filePattern;
   if (filePattern.endsWith('/')) {
