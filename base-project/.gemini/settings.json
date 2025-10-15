@@ -4,7 +4,8 @@
       "command": "npm",
       "args": [
         "run",
-        "mcp"
+        "mcp",
+        "--silent"
       ]
     }
   }
