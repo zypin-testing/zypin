@@ -123,11 +123,25 @@ async function loadUserTools(serverInstance) {
   try {
     console.error('Loading user-defined tools from zypin.mcp.js...');
     const userModule = await import(`${userToolsPath}?v=${Date.now()}`);
-    
+
     if (Array.isArray(userModule.default)) {
       userModule.default.forEach(tool => {
-        // The user-defined tool should follow the same structure
-        serverInstance.tool(tool.name, tool.description, tool.inputSchema, tool.execute);
+        // Wrap the execute function to ensure proper MCP response format
+        const wrappedExecute = async (args) => {
+          const result = await tool.execute(args);
+
+          // If result already has content property, return as-is
+          if (result && result.content) {
+            return result;
+          }
+
+          // Otherwise, wrap the result in proper MCP format
+          return {
+            content: [{ type: 'text', text: JSON.stringify(result, null, 2) }]
+          };
+        };
+
+        serverInstance.tool(tool.name, tool.description, tool.inputSchema, wrappedExecute);
       });
       console.error(`Found and registered ${userModule.default.length} user-defined tool(s).`);
     } else {
