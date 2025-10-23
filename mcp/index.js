@@ -2,7 +2,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import fs from 'fs-extra';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { fileURLToPath, pathToFileURL } from 'url';
 import { z } from 'zod';
 
 // Import the refactored logic functions
@@ -122,7 +122,7 @@ async function loadUserTools(serverInstance) {
 
   try {
     console.error('Loading user-defined tools from zypin.mcp.js...');
-    const userModule = await import(`${userToolsPath}?v=${Date.now()}`);
+    const userModule = await import(`${pathToFileURL(userToolsPath)}?v=${Date.now()}`);
 
     if (Array.isArray(userModule.default)) {
       userModule.default.forEach(tool => {
